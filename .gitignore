@@ -2,4 +2,6 @@
 .venv/
 .todo
 editppt/__pycache__
+editppt/extracted_images/
 editppt/result*
+
