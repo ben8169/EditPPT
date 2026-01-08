@@ -1,0 +1,115 @@
+{
+    "understanding": "Translate all text within every slide of the presentation into Korean, preserving formatting and the structure of titles, body text, and any other text-based elements.",
+    "tasks": [
+        {
+            "page number": 1,
+            "description": "Translate all text on slide 1 into Korean",
+            "target": "All text elements on slide 1 (title, body, footers, text within shapes, etc.)",
+            "action": "Translate all text content into Korean",
+            "contents": {
+                "source_language": "auto-detect",
+                "target_language": "Korean",
+                "preserve_formatting": true
+            }
+        },
+        {
+            "page number": 2,
+            "description": "Translate all text on slide 2 into Korean",
+            "target": "All text elements on slide 2 (title, body, footers, text within shapes, etc.)",
+            "action": "Translate all text content into Korean",
+            "contents": {
+                "source_language": "auto-detect",
+                "target_language": "Korean",
+                "preserve_formatting": true
+            }
+        },
+        {
+            "page number": 3,
+            "description": "Translate all text on slide 3 into Korean",
+            "target": "All text elements on slide 3 (title, body, footers, text within shapes, etc.)",
+            "action": "Translate all text content into Korean",
+            "contents": {
+                "source_language": "auto-detect",
+                "target_language": "Korean",
+                "preserve_formatting": true
+            }
+        },
+        {
+            "page number": 4,
+            "description": "Translate all text on slide 4 into Korean",
+            "target": "All text elements on slide 4 (title, body, footers, text within shapes, etc.)",
+            "action": "Translate all text content into Korean",
+            "contents": {
+                "source_language": "auto-detect",
+                "target_language": "Korean",
+                "preserve_formatting": true
+            }
+        },
+        {
+            "page number": 5,
+            "description": "Translate all text on slide 5 into Korean",
+            "target": "All text elements on slide 5 (title, body, footers, text within shapes, etc.)",
+            "action": "Translate all text content into Korean",
+            "contents": {
+                "source_language": "auto-detect",
+                "target_language": "Korean",
+                "preserve_formatting": true
+            }
+        },
+        {
+            "page number": 6,
+            "description": "Translate all text on slide 6 into Korean",
+            "target": "All text elements on slide 6 (title, body, footers, text within shapes, etc.)",
+            "action": "Translate all text content into Korean",
+            "contents": {
+                "source_language": "auto-detect",
+                "target_language": "Korean",
+                "preserve_formatting": true
+            }
+        },
+        {
+            "page number": 7,
+            "description": "Translate all text on slide 7 into Korean",
+            "target": "All text elements on slide 7 (title, body, footers, text within shapes, etc.)",
+            "action": "Translate all text content into Korean",
+            "contents": {
+                "source_language": "auto-detect",
+                "target_language": "Korean",
+                "preserve_formatting": true
+            }
+        },
+        {
+            "page number": 8,
+            "description": "Translate all text on slide 8 into Korean",
+            "target": "All text elements on slide 8 (title, body, footers, text within shapes, etc.)",
+            "action": "Translate all text content into Korean",
+            "contents": {
+                "source_language": "auto-detect",
+                "target_language": "Korean",
+                "preserve_formatting": true
+            }
+        },
+        {
+            "page number": 9,
+            "description": "Translate all text on slide 9 into Korean",
+            "target": "All text elements on slide 9 (title, body, footers, text within shapes, etc.)",
+            "action": "Translate all text content into Korean",
+            "contents": {
+                "source_language": "auto-detect",
+                "target_language": "Korean",
+                "preserve_formatting": true
+            }
+        },
+        {
+            "page number": 10,
+            "description": "Translate all text on slide 10 into Korean",
+            "target": "All text elements on slide 10 (title, body, footers, text within shapes, etc.)",
+            "action": "Translate all text content into Korean",
+            "contents": {
+                "source_language": "auto-detect",
+                "target_language": "Korean",
+                "preserve_formatting": true
+            }
+        }
+    ]
+}

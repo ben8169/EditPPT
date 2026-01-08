@@ -1,0 +1,5 @@
+.env
+.venv/
+.todo
+editppt/__pycache__
+editppt/result*
