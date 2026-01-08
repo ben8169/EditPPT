@@ -14,6 +14,8 @@ def parse_llm_response(response):
     Returns the loaded object (dict or list), or None if parsing fails.
     """
     if not response or not isinstance(response, str):
+        print('response is empty or not a string')
+        print(type(response))
         return None
 
     # Remove markdown code fences
@@ -706,8 +708,8 @@ def parse_active_slide_objects(slide_num:int=1):
             return output['status']
         
         # 프레젠테이션 정보 추가
-        # output["Presentation_Name"] = f"{presentation.Name}"
-        # output["Total_Slide_Number"] = f"{presentation.Slides.Count}"
+        output["Presentation_Name"] = f"{presentation.Name}"
+        output["Total_Slide_Number"] = f"{presentation.Slides.Count}"
         
         # 슬라이드 범위 확인
         if slide_num > presentation.Slides.Count or slide_num < 1:

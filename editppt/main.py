@@ -62,7 +62,7 @@ def main():
     parser = Parser(baseline=True)
     parsed_json_list = parser.process()
     logger.info(f"Parser 완료 ...")
-    with open("parser_json.json", "a", encoding="utf-8") as f:
+    with open("parser_json.json", "w", encoding="utf-8") as f:
         for pj in parsed_json_list:
             json.dump(pj, f, ensure_ascii=False, indent=4)
 
@@ -75,14 +75,10 @@ def main():
         user_input = input("\n[User]: ")
         plan_json = planner(user_input)
         logger.info(f"Planner 완료 - 결과: {str(plan_json)[:100]}...")
-        with open("planner_json.json", "a", encoding="utf-8") as f:
+        with open("planner_json.json", "w", encoding="utf-8") as f:
             json.dump(plan_json, f, ensure_ascii=False, indent=4)
 
         agent.run(plan_json, parsed_json_list)
-    
-        with open("result_log.txt", "a", encoding="utf-8") as f:
-            f.write(agent.messages+ "\n\n")
-
         if not user_input.strip():
             continue
 

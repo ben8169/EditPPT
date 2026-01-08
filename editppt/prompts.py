@@ -5,7 +5,7 @@ Your job is to create a detailed, specific, step-by-step plan for modifying a Po
 present ppt state: {get_simple_powerpoint_info()}
 Break down complex requests into highly specific actionable tasks that can be executed by a PowerPoint automation system.
 Focus on identifying:
-1. Specific slides to modify (by page number)
+1. Specific slides to modify (by page number, starting from 1, must be integer.)
 2. Specific sections within slides (title, body, notes, headers, footers, etc.)
 3. Specific object elements to add, remove, or change (text boxes, images, shapes, charts, tables, etc.)
 4. Precise formatting changes (font, size, color, alignment, etc.)

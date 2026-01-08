@@ -31,35 +31,46 @@ class Planner:
         #print(response)
         # The response should be a JSON string, but let's handle errors safely
         
-        call_llm_response = call_llm(
-            model=self.model,   
-            messages=[{"role": "system", "content": prompt}]
 
-        )
-        response = call_llm_response.choices[0].message.content
+
+        MAX_RETRIES = 3
+        while MAX_RETRIES > 0:
+            try:
+
+                call_llm_response = call_llm(
+                model=self.model,   
+                messages=[{"role": "system", "content": prompt}]
+                )
+                response = call_llm_response.choices[0].message.content
         # input_tokens = call_llm_response.usage.input_tokens
         # output_tokens = call_llm_response.usage.output_tokens
         # total_cost = call_llm_response.usage.total_cost
-
-        try:
-            plan = parse_llm_response(response)
-            return plan
-            # return plan, input_tokens, output_tokens, total_cost
-        except json.JSONDecodeError:
-            # Fallback - return a basic structure with the raw response
-            return {
-                "understanding": "Failed to parse LLM response into proper JSON format",
-                "tasks": [
-                    {
-                        "id": 1,
-                        "description": "Review and manually interpret the plan",
-                        "target": "N/A",
-                        "action": "manual_review",
-                        "details": response
-                    }
-                ],
-                "requires_parsing": False,
-                "requires_processing": False,
-                "additional_notes": "LLM response was not in valid JSON format"
-            }
-        
+                plan = parse_llm_response(response)
+                if plan is None:
+                    print("Failed to parse LLM response, retrying...")
+                    # print(response)
+                    MAX_RETRIES -= 1
+                    time.sleep(1)  # brief pause before retrying
+                    continue                    
+                return plan
+                # return plan, input_tokens, output_tokens, total_cost
+            except json.JSONDecodeError:
+                # Fallback - return a basic structure with the raw response
+                return {
+                    "understanding": "Failed to parse LLM response into proper JSON format",
+                    "tasks": [
+                        {
+                            "id": 1,
+                            "description": "Review and manually interpret the plan",
+                            "target": "N/A",
+                            "action": "manual_review",
+                            "details": response
+                        }
+                    ],
+                    "requires_parsing": False,
+                    "requires_processing": False,
+                    "additional_notes": "LLM response was not in valid JSON format"
+                }
+            
+        else:
+            return response
