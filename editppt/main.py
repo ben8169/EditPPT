@@ -50,8 +50,6 @@ def main():
         
     try:
         prs = initialize_ppt(PPT_PATH)
-        # prs_dict = Parser(baseline=True).process()
-        # print(prs_dict)
         logger.info(f"Presentation loaded with {len(prs.Slides)} slides.")
     except Exception as e:
         logger.error(f"Failed to initialize PowerPoint: {e}")
