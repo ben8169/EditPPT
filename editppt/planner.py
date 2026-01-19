@@ -1,5 +1,5 @@
 from llm_client import call_llm
-from prompts import PLAN_PROMPT
+from prompts import create_plan_prompt
 from utils import  parse_llm_response
 import os
 import json
@@ -7,70 +7,116 @@ from datetime import datetime
 import time
 import win32com.client
 
+from logtime import *
+
 class Planner:
     def __init__(self, model):
-        self.system_prompt = PLAN_PROMPT
+        self.system_prompt = create_plan_prompt()
         self.model = model
-        # self.API_KEY = get_api_key_and_provider(model)[1]
-    
+
     def __call__(self, user_input: str):
-        # Construct the prompt for the LLM
-        prompt = f"""
-        {self.system_prompt}
-        
-        Now, please create a plan for the following request:
-        {user_input}
-        """
-        # if "4.1" in model_name:
-        #     response = _call_gpt_api(prompt= prompt, api_key=api_key, model = model_name)
-
-        # response, input_tokens, output_tokens, total_cost = llm_request_with_retries_gemini(
-        #     model_name = model_name,
-        #     prompt_content = prompt
-        # )
-        #print(response)
-        # The response should be a JSON string, but let's handle errors safely
-        
-
-
+        last_error_feedback = ""
         MAX_RETRIES = 3
-        while MAX_RETRIES > 0:
-            try:
 
+        for attempt in range(1, MAX_RETRIES + 1):
+
+
+            try:
+                # 1) Call LLM
                 call_llm_response = call_llm(
-                model=self.model,   
-                messages=[{"role": "system", "content": prompt}]
+                    model=self.model,
+                    messages=[
+                        {"role": "system", "content": self.system_prompt},
+                        {"role": "user", "content": last_error_feedback +
+                         "\nNow, please create a plan for the following request:\n" + user_input}
+                    ]
                 )
-                response = call_llm_response.choices[0].message.content
-        # input_tokens = call_llm_response.usage.input_tokens
-        # output_tokens = call_llm_response.usage.output_tokens
-        # total_cost = call_llm_response.usage.total_cost
-                plan = parse_llm_response(response)
-                if plan is None:
-                    print("Failed to parse LLM response, retrying...")
-                    # print(response)
-                    MAX_RETRIES -= 1
-                    time.sleep(1)  # brief pause before retrying
-                    continue                    
-                return plan
-                # return plan, input_tokens, output_tokens, total_cost
-            except json.JSONDecodeError:
-                # Fallback - return a basic structure with the raw response
-                return {
-                    "understanding": "Failed to parse LLM response into proper JSON format",
-                    "tasks": [
-                        {
-                            "id": 1,
-                            "description": "Review and manually interpret the plan",
-                            "target": "N/A",
-                            "action": "manual_review",
-                            "details": response
-                        }
-                    ],
-                    "requires_parsing": False,
-                    "requires_processing": False,
-                    "additional_notes": "LLM response was not in valid JSON format"
-                }
-            
-        else:
-            return response
+
+                response = call_llm_response.output_text
+
+                # 🔹 로그: input + raw response
+                dump_debug_log(
+                    f"attempt_{attempt}_{TIMESTAMP}_raw.txt",
+                    f"""[USER INPUT]
+{user_input}
+
+[ERROR FEEDBACK]
+{last_error_feedback}
+
+[RAW LLM RESPONSE]
+{response}
+"""
+                )
+
+                # 2) Parse response
+                plan, error = parse_llm_response(response)
+
+                # 3) Success
+                if error is None:
+                    dump_debug_log(
+                        f"attempt_{attempt}_{TIMESTAMP}_parsed_success.txt",
+                        json.dumps(plan, indent=2, ensure_ascii=False)
+                    )
+                    return plan
+
+                # 4) Parsing failed
+                e, state = error
+
+                dump_debug_log(
+                    f"attempt_{attempt}_parse_error.txt",
+                    f"""[EXCEPTION]
+{type(e).__name__}: {e}
+
+[FAILED PAYLOAD / STATE]
+{state}
+"""
+                )
+
+                last_error_feedback = f"""
+#### Additional Information for Correction ####
+The previous response could not be parsed.
+
+Error:
+{type(e).__name__}: {e}
+
+Invalid output:
+{state}
+
+Please fix the errors above and return ONLY valid JSON.
+Do NOT include comments, explanations, or placeholders.
+"""
+
+                print(f"[Attempt {attempt}/{MAX_RETRIES}] Parsing failed. Retrying...")
+                time.sleep(1)
+
+            except Exception as e:
+                # 🔹 LLM 호출 자체 실패 로그
+                dump_debug_log(
+                    f"attempt_{attempt}_exception.txt",
+                    f"""[EXCEPTION DURING LLM CALL]
+{type(e).__name__}: {e}
+"""
+                )
+
+                print(f"[Attempt {attempt}/{MAX_RETRIES}] Exception during LLM call: {e}")
+                time.sleep(1)
+
+        # retries exhausted
+        dump_debug_log(
+            f"final_failure.txt",
+            f"""[FINAL FAILURE]
+Last error feedback:
+{last_error_feedback}
+
+Last response:
+{response if 'response' in locals() else 'NO RESPONSE'}
+"""
+        )
+
+        raise RuntimeError("Failed to obtain a valid plan from the LLM response.")
+
+def dump_debug_log(filename: str, content: str):
+    os.makedirs(f"logfiles/{TIMESTAMP}/llm_debug_logs", exist_ok=True)
+    path = os.path.join(f"logfiles/{TIMESTAMP}/llm_debug_logs", filename)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(content)

@@ -1,314 +1,104 @@
 {
-    "understanding": "Update the page numbering on all slides so that the denominator in the page number fraction reflects the correct total number of slides (31), instead of the incorrect value 28. The slide number fraction format should be 'current page/31' on each slide.",
+    "understanding": "Bold all important parts within the body text on each slide to highlight key information.",
     "tasks": [
         {
             "page number": 1,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 1 (page number area)",
-            "action": "Update page number format to '1/31'",
+            "description": "Bold important parts in the body text of slide 1.",
+            "target": "Body text section of slide 1",
+            "action": "Apply bold formatting to key words, phrases, or sentences identified as important",
             "contents": {
-                "format": "1/31",
-                "ensure_consistent_font_and_placement": true
+                "criteria_for_importance": "Keywords, main concepts, results, or summary points",
+                "font_weight": "bold"
             }
         },
         {
             "page number": 2,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 2 (page number area)",
-            "action": "Update page number format to '2/31'",
+            "description": "Bold important parts in the body text of slide 2.",
+            "target": "Body text section of slide 2",
+            "action": "Apply bold formatting to key words, phrases, or sentences identified as important",
             "contents": {
-                "format": "2/31",
-                "ensure_consistent_font_and_placement": true
+                "criteria_for_importance": "Keywords, main concepts, results, or summary points",
+                "font_weight": "bold"
             }
         },
         {
             "page number": 3,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 3 (page number area)",
-            "action": "Update page number format to '3/31'",
+            "description": "Bold important parts in the body text of slide 3.",
+            "target": "Body text section of slide 3",
+            "action": "Apply bold formatting to key words, phrases, or sentences identified as important",
             "contents": {
-                "format": "3/31",
-                "ensure_consistent_font_and_placement": true
+                "criteria_for_importance": "Keywords, main concepts, results, or summary points",
+                "font_weight": "bold"
             }
         },
         {
             "page number": 4,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 4 (page number area)",
-            "action": "Update page number format to '4/31'",
+            "description": "Bold important parts in the body text of slide 4.",
+            "target": "Body text section of slide 4",
+            "action": "Apply bold formatting to key words, phrases, or sentences identified as important",
             "contents": {
-                "format": "4/31",
-                "ensure_consistent_font_and_placement": true
+                "criteria_for_importance": "Keywords, main concepts, results, or summary points",
+                "font_weight": "bold"
             }
         },
         {
             "page number": 5,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 5 (page number area)",
-            "action": "Update page number format to '5/31'",
+            "description": "Bold important parts in the body text of slide 5.",
+            "target": "Body text section of slide 5",
+            "action": "Apply bold formatting to key words, phrases, or sentences identified as important",
             "contents": {
-                "format": "5/31",
-                "ensure_consistent_font_and_placement": true
+                "criteria_for_importance": "Keywords, main concepts, results, or summary points",
+                "font_weight": "bold"
             }
         },
         {
             "page number": 6,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 6 (page number area)",
-            "action": "Update page number format to '6/31'",
+            "description": "Bold important parts in the body text of slide 6.",
+            "target": "Body text section of slide 6",
+            "action": "Apply bold formatting to key words, phrases, or sentences identified as important",
             "contents": {
-                "format": "6/31",
-                "ensure_consistent_font_and_placement": true
+                "criteria_for_importance": "Keywords, main concepts, results, or summary points",
+                "font_weight": "bold"
             }
         },
         {
             "page number": 7,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 7 (page number area)",
-            "action": "Update page number format to '7/31'",
+            "description": "Bold important parts in the body text of slide 7.",
+            "target": "Body text section of slide 7",
+            "action": "Apply bold formatting to key words, phrases, or sentences identified as important",
             "contents": {
-                "format": "7/31",
-                "ensure_consistent_font_and_placement": true
+                "criteria_for_importance": "Keywords, main concepts, results, or summary points",
+                "font_weight": "bold"
             }
         },
         {
             "page number": 8,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 8 (page number area)",
-            "action": "Update page number format to '8/31'",
+            "description": "Bold important parts in the body text of slide 8.",
+            "target": "Body text section of slide 8",
+            "action": "Apply bold formatting to key words, phrases, or sentences identified as important",
             "contents": {
-                "format": "8/31",
-                "ensure_consistent_font_and_placement": true
+                "criteria_for_importance": "Keywords, main concepts, results, or summary points",
+                "font_weight": "bold"
             }
         },
         {
             "page number": 9,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 9 (page number area)",
-            "action": "Update page number format to '9/31'",
+            "description": "Bold important parts in the body text of slide 9.",
+            "target": "Body text section of slide 9",
+            "action": "Apply bold formatting to key words, phrases, or sentences identified as important",
             "contents": {
-                "format": "9/31",
-                "ensure_consistent_font_and_placement": true
+                "criteria_for_importance": "Keywords, main concepts, results, or summary points",
+                "font_weight": "bold"
             }
         },
         {
             "page number": 10,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 10 (page number area)",
-            "action": "Update page number format to '10/31'",
+            "description": "Bold important parts in the body text of slide 10.",
+            "target": "Body text section of slide 10",
+            "action": "Apply bold formatting to key words, phrases, or sentences identified as important",
             "contents": {
-                "format": "10/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 11,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 11 (page number area)",
-            "action": "Update page number format to '11/31'",
-            "contents": {
-                "format": "11/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 12,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 12 (page number area)",
-            "action": "Update page number format to '12/31'",
-            "contents": {
-                "format": "12/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 13,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 13 (page number area)",
-            "action": "Update page number format to '13/31'",
-            "contents": {
-                "format": "13/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 14,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 14 (page number area)",
-            "action": "Update page number format to '14/31'",
-            "contents": {
-                "format": "14/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 15,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 15 (page number area)",
-            "action": "Update page number format to '15/31'",
-            "contents": {
-                "format": "15/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 16,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 16 (page number area)",
-            "action": "Update page number format to '16/31'",
-            "contents": {
-                "format": "16/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 17,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 17 (page number area)",
-            "action": "Update page number format to '17/31'",
-            "contents": {
-                "format": "17/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 18,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 18 (page number area)",
-            "action": "Update page number format to '18/31'",
-            "contents": {
-                "format": "18/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 19,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 19 (page number area)",
-            "action": "Update page number format to '19/31'",
-            "contents": {
-                "format": "19/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 20,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 20 (page number area)",
-            "action": "Update page number format to '20/31'",
-            "contents": {
-                "format": "20/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 21,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 21 (page number area)",
-            "action": "Update page number format to '21/31'",
-            "contents": {
-                "format": "21/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 22,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 22 (page number area)",
-            "action": "Update page number format to '22/31'",
-            "contents": {
-                "format": "22/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 23,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 23 (page number area)",
-            "action": "Update page number format to '23/31'",
-            "contents": {
-                "format": "23/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 24,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 24 (page number area)",
-            "action": "Update page number format to '24/31'",
-            "contents": {
-                "format": "24/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 25,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 25 (page number area)",
-            "action": "Update page number format to '25/31'",
-            "contents": {
-                "format": "25/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 26,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 26 (page number area)",
-            "action": "Update page number format to '26/31'",
-            "contents": {
-                "format": "26/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 27,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 27 (page number area)",
-            "action": "Update page number format to '27/31'",
-            "contents": {
-                "format": "27/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 28,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 28 (page number area)",
-            "action": "Update page number format to '28/31'",
-            "contents": {
-                "format": "28/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 29,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 29 (page number area)",
-            "action": "Update page number format to '29/31'",
-            "contents": {
-                "format": "29/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 30,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 30 (page number area)",
-            "action": "Update page number format to '30/31'",
-            "contents": {
-                "format": "30/31",
-                "ensure_consistent_font_and_placement": true
-            }
-        },
-        {
-            "page number": 31,
-            "description": "Correct the denominator of the page number fraction to 31",
-            "target": "Footer section of slide 31 (page number area)",
-            "action": "Update page number format to '31/31'",
-            "contents": {
-                "format": "31/31",
-                "ensure_consistent_font_and_placement": true
+                "criteria_for_importance": "Keywords, main concepts, results, or summary points",
+                "font_weight": "bold"
             }
         }
     ]

@@ -5,15 +5,58 @@ from dotenv import load_dotenv
 from google import genai 
 from google.genai import types
 from openai import OpenAI
-from anthropic import Anthropic  # 추가: Anthropic 라이브러리 임포트
 import json
 
 load_dotenv()
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 
+QA_SCHEMA = {
+  "type": "object",
+  "properties": {
+    "HasCriticalIssues": {
+      "type": "string",
+      "enum": ["Yes", "No"]
+    },
+    "Issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "IssueType": {
+            "type": "string",
+            "enum": [
+              "TEXT_OVERFLOW",
+              "ELEMENT_COLLISION",
+              "ALIGNMENT_INCONSISTENCY",
+              "LEGIBILITY_CONTRAST"
+            ]
+          },
+          "AffectedShapeIDs": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "TechnicalDiagnosis": {
+            "type": "string"
+          },
+          "ActionableFix": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "IssueType",
+          "AffectedShapeIDs",
+          "TechnicalDiagnosis",
+          "ActionableFix"
+        ],
+        "additionalProperties": False
+      }
+    }
+  },
+  "required": ["HasCriticalIssues", "Issues"],
+  "additionalProperties": False
+}
 
 
 import json
@@ -115,129 +158,191 @@ def check_design_gpt(image_path, prompt, api_key):
         client = OpenAI(api_key=api_key)
         base64_image = encode_image(image_path)
         
-        response = client.chat.completions.create(
-            model="gpt-5",
-            messages=[
+        response = client.responses.create(
+    model="gpt-5",
+    input=[
+        {
+            "role": "user",
+            "content": [
+                {"type": "input_text", "text": prompt},
                 {
-                    "role": "user",
-                    "content": [
-                        {"type": "text", "text": prompt},
-                        {
-                            "type": "image_url", 
-                            "image_url": {"url": f"data:image/png;base64,{base64_image}"}
-                        }
-                    ]
+                    "type": "input_image",
+                    "image_url": f"data:image/png;base64,{base64_image}"
                 }
             ]
-        )
-        return f"[GPT-4o Feedback]\n{response.choices[0].message.content}"
-    except Exception as e:
-        return f"[GPT-4o Error] {str(e)}"
-
-def check_design_claude(image_path, prompt, api_key):
-    """
-    Send an image to Claude for analysis.
-    
-    Args:
-        image_path: Path to the image file
-        prompt: Text prompt describing what you want Claude to analyze
-        api_key: Your Anthropic API key
-        
-    Returns:
-        String containing Claude's feedback or error message
-    """
-    try:
-        if not os.path.exists(image_path):
-            return f"[Claude Error] File not found: {image_path}"
-        
-        # Determine media type from file extension
-        ext = os.path.splitext(image_path)[1].lower()
-        media_type_map = {
-            '.png': 'image/png',
-            '.jpg': 'image/jpeg',
-            '.jpeg': 'image/jpeg',
-            '.gif': 'image/gif',
-            '.webp': 'image/webp'
         }
-        media_type = media_type_map.get(ext, 'image/png')
-        
-        client = Anthropic(api_key=api_key)
-        base64_image = encode_image(image_path)
-        
-        response = client.messages.create(
-            model="claude-sonnet-4-5-20250929",  # Updated to latest model
-            max_tokens=1000,
-            messages=[{
-                "role": "user",
-                "content": [
-                    {
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": media_type,
-                            "data": base64_image
-                        }
-                    },
-                    {"type": "text", "text": prompt}
-                ]
-            }]
-        )
-        return f"[Claude Feedback]\n{response.content[0].text}"
+    ],
+    text={
+        "format": {
+            "name": "ppt_qa_result",
+            "type": "json_schema",
+            "schema": QA_SCHEMA
+        }
+    }
+)
+        return f"[GPT Feedback]\n{response.output_text}"
     except Exception as e:
-        return f"[Claude Error] {str(e)}"
+        return f"[GPT Error] {str(e)}"
+
 
 # --- 3. 실행 영역 ---
 
 if __name__ == "__main__":
     # 1. 먼저 슬라이드를 이미지로 추출합니다.
-    output_dir = "SlideScreenshots"
-    exported_path = export_all_slides_to_images(output_dir)
+    # output_dir = "SlideScreenshots"
+    # exported_path = export_all_slides_to_images(output_dir)
     with open('parser_json.json', 'r', encoding='utf-8') as f:
-        parsed_slide = load_possible_multiple_json('parser_json.json')
+        parsed_slide = load_possible_multiple_json(r'C:\Users\ben81\Documents\EditPPT\editppt\logfiles\20260120_023547\parser_Database.json')
 
-    for i in range(1,len(os.listdir('SlideScreenshots'))+1):     
-        if i != 7:
-            continue   
+    # for i in range(5,len(os.listdir('.SlideScreenshots'))+1):    
+    k = 6 
+    for i in range(k, k+1):     
+    # for i in range(7, 8):     
+
         # 추출된 파일 중 7번째 슬라이드 경로 설정
-        IMAGE_PATH = os.path.join('SlideScreenshots', f"slide_{i}.png")
+        IMAGE_PATH = os.path.join('.SlideScreenshots', f"slide_{i}.png")
 
-        parsed_contents = parsed_slide[i-1].get('contents')
+        parsed_contents = parsed_slide.get(f'{i}')
+        agent_request = f'Translate all English into Korean in slide {i}'
         
-        PROMPT = f"""You are a professional PPT Quality Assurance (QA) specialist. Your primary objective is to detect technical and structural defects in the slide that compromise professional standards and readability. 
+        PROMPT = f"""You are a professional PPT Quality Assurance (QA) specialist.
 
-Perform a rigorous audit by cross-referencing the slide image with the provided JSON data. Focus exclusively on identifying "Critical Violations" in the following categories:
+Your role is NOT to review the entire slide.
+Your role is to validate ONLY the visual and structural impact
+caused by a specific modification request executed by another agent.
 
-1. **Text Overflow & Clipping**: 
-   - Detect text exceeding its bounding box or the slide margins.
-   - Flag unintended line breaks, truncated text, or hidden characters caused by excessive font size or insufficient box dimensions.
+You MUST strictly limit your evaluation scope to:
+- The shapes explicitly modified by the agent request
+- Shapes spatially adjacent to or directly affected by those modifications
 
-2. **Element Overlap & Collision**: 
-   - Identify unintended intersections between text, shapes, or icons that obscure information.
-   - Verify that the stacking order (z-index) is correct (e.g., text must never be obscured by background shapes).
+You MUST NOT evaluate or report issues unrelated to the modification,
+even if they would normally qualify as critical issues.
 
-3. **Alignment & Spacing Inconsistency**: 
-   - Check if elements intended to be aligned (e.g., headers, bullet points) have inconsistent coordinates.
-   - Detect uneven gutters or margins between repetitive components (e.g., icon sets or grid layouts).
+---
 
-4. **Legibility & Contrast**: 
-   - Flag text that is visually inaccessible due to poor color contrast against the background or placement over busy image areas.
+### Agent Modification Context (SOURCE OF SCOPE)
 
-**Output Requirements**:
-For every issue detected, you must return a structured response in the following format:
-- **Issue Type**: (e.g., Text Overflow, Element Collision, etc.)
-- **Affected Element ID(s)**: (Reference the specific ID(s) from the provided JSON)
-- **Technical Diagnosis**: A precise explanation of the structural error (e.g., "Text is clipped at the bottom by 12px due to small bounding box").
-- **Actionable Fix**: A specific technical instruction for correction (e.g., "Reduce font size to 14pt" or "Adjust X-coordinate to 240").
+The following request describes WHAT was modified and WHERE:
 
-Slide Contents JSON: 
+{agent_request}
+
+This request DEFINES your inspection boundary.
+Anything outside the logical or spatial impact of this request
+MUST be ignored.
+
+---
+
+### Evaluation Objective (CHANGE IMPACT ONLY)
+
+Your task is to determine whether the requested modification
+introduced any NEW, SEVERE presentation defects in the affected area.
+
+You are ONLY checking for regressions caused by the change, such as:
+- Newly introduced text overflow
+- Newly introduced element overlap
+- Newly introduced severe misalignment
+- Newly introduced legibility issues
+
+Pre-existing issues that were already present before the modification
+MUST NOT be reported.
+
+If an issue is subtle, borderline, subjective, or unrelated to the change,
+you MUST ignore it.
+
+If there is any uncertainty about whether an issue was caused by the change,
+you MUST assume it was NOT caused by the change.
+
+---
+
+### Criticality Threshold (HARD SUPPRESSION RULES)
+
+You MUST NOT report an issue unless ALL of the following are true:
+
+1. The issue is directly caused by the modification described in 'agent_request'.
+2. The issue is immediately obvious to a human viewer at normal presentation scale.
+3. The issue clearly degrades readability or professional credibility.
+
+DO NOT report issues that:
+- Exist outside the modified area
+- Existed prior to the modification
+- Require close inspection, measurement, or interpretation
+- Could reasonably be intentional design choices
+
+If in doubt, report NO issues.
+
+---
+
+### Source of Truth Rules (Image vs JSON)
+
+1. **Rendered Visual Outcome (Primary)**
+   - If the affected shapes appear visibly broken in the image,
+     the image is the primary source of truth.
+
+2. **Structural / Z-Order Issues (Secondary)**
+   - If the agent request modified structure (size, z-order, visibility),
+     JSON may be used to confirm regressions even if subtle in the image.
+
+If the defect cannot be clearly linked to the modification,
+DO NOT report it.
+
+---
+
+### Allowed Issue Types (ENUM – MUST USE EXACTLY)
+
+- TEXT_OVERFLOW
+- ELEMENT_COLLISION
+- ALIGNMENT_INCONSISTENCY
+
+---
+
+### Output Requirements (STRICT)
+
+- **HasCriticalIssues** must be `"Yes"` or `"No"`.
+
+#### If **HasCriticalIssues = "Yes"**
+Return ONLY issues that:
+- Were introduced by the modification
+- Affect the modified or directly adjacent shapes
+
+Each issue MUST include:
+- **IssueType**
+- **AffectedShapeIDs**
+- **TechnicalDiagnosis** (explain how the modification caused it)
+- **ActionableFix** (how to fix the regression)
+
+#### If **HasCriticalIssues = "No"**
+Return ONLY:
+{{
+  "HasCriticalIssues": "No"
+}}
+
+Do NOT return any additional commentary.
+
+---
+
+### Fail-Safe Rule (MANDATORY)
+
+If you cannot confidently attribute a defect to the modification,
+you MUST return:
+
+{{
+  "HasCriticalIssues": "No"
+}}
+
+---
+### Agent request
+{agent_request}
+### Slide Contents JSON 
 {parsed_contents}
+
 """
+        # PROMPT += json.dumps(parsed_contents, indent=2, ensure_ascii=False)
         # 이미지 파일이 실제로 존재하는지 확인 후 실행
         if os.path.exists(IMAGE_PATH):
             print(check_design_gemini(IMAGE_PATH, PROMPT, GEMINI_API_KEY))
             print("-" * 30)
             print(check_design_gpt(IMAGE_PATH, PROMPT, OPENAI_API_KEY))
             print("-" * 30)
-            print(check_design_claude(IMAGE_PATH, PROMPT, ANTHROPIC_API_KEY))
+            print()
         else:
             print(f"오류: '{IMAGE_PATH}' 파일을 찾을 수 없습니다. 슬라이드 개수를 확인하세요.")

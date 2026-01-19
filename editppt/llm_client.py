@@ -3,6 +3,13 @@ import os
 from loguru import logger
 from openai import OpenAI
 from dotenv import load_dotenv
+from google import genai 
+from google.genai import types
+import base64
+import json
+from io import BytesIO
+from PIL import Image
+
 
 load_dotenv()
 
@@ -20,7 +27,7 @@ def get_api_key_and_provider(model: str):
     api_key = None
 
     # OpenAI
-    if model.startswith("gpt-") or model in ["gpt-4o", "gpt-4.1", "gpt-4o-mini"]:
+    if model.startswith("gpt-"):
         provider = "openai"
         api_key = OPENAI_API_KEY
 
@@ -65,8 +72,7 @@ def get_client_for_model(model: str):
         ...
     
     elif provider == "gemini":
-        # TODO: 나중에 Gemini API로 구현
-        ...
+        client = genai.Client(api_key=api_key)
     
     else:
         raise ValueError(f"알 수 없는 provider: {provider}")
@@ -82,14 +88,13 @@ def call_llm(
     **kwargs,
 ):
     """
-    공통 chat completion 호출 래퍼
-    - Agent에서 이 함수만 사용하게 해서, 모델/키/클라이언트 관리를 이 파일로 몰아줌
+    공통 llm 호출 래퍼
     """
     client, provider = get_client_for_model(model)
 
     payload = {
         "model": model,
-        "messages": messages,
+        "input": messages, 
     }
 
     if tools is not None:
@@ -97,8 +102,33 @@ def call_llm(
     if tool_choice is not None:
         payload["tool_choice"] = tool_choice
 
-    # 기타 추가 kwargs (temperature, max_tokens 등)
     payload.update(kwargs)
 
-    return client.chat.completions.create(**payload)
+    return client.responses.create(**payload)
 
+
+def call_llm_gemini(
+    model: str,
+    messages: str,
+    image: base64 = None
+    ,
+    # tools=None,
+    # tool_choice=None,
+    # **kwargs,
+):
+    """
+    Gemini 전용 호출 래퍼 (google-genai v1.0+ 기준)
+    """
+    client, provider = get_client_for_model(model)
+    try:
+        response = client.models.generate_content(
+            model=model, 
+            contents=[
+                types.Part.from_bytes(data=image, mime_type="image/png"),
+                messages
+            ]
+        )
+        return response.text
+    
+    except Exception as e:
+        return f"[Gemini Error] {str(e)}"

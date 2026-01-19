@@ -1,5 +1,6 @@
 import win32com.client
 import json
+import re
 from typing import Optional, Union, List, Dict, Any
 
 
@@ -17,21 +18,21 @@ def _hex_to_rgb_int(hex_str):
     return (b << 16) | (g << 8) | r
 
 
-def find_shape_by_id(prs, slide_index, shape_id):
+def find_shape_by_id(prs, slide_number, shape_id):
     """Finds a specific Shape object by its unique ID on a given slide."""
     try:
-        slide = prs.Slides(slide_index)
+        slide = prs.Slides(slide_number)
         for shape in slide.Shapes:
             if shape.Id == shape_id:
                 return shape
     except Exception as e:
-        raise ValueError(f"Error accessing slide {slide_index}: {e}")
-    raise ValueError(f"Shape with ID {shape_id} not found on slide {slide_index}.")
+        raise ValueError(f"Error accessing slide {slide_number}: {e}")
+    raise ValueError(f"Shape with ID {shape_id} not found on slide {slide_number}.")
 
 
-def find_shapes_by_name(prs, slide_index, shape_name):
+def find_shapes_by_name(prs, slide_number, shape_name):
     """Finds shapes by name pattern on a given slide."""
-    slide = prs.Slides(slide_index)
+    slide = prs.Slides(slide_number)
     shapes = []
     for shape in slide.Shapes:
         if shape_name.lower() in shape.Name.lower():
@@ -41,7 +42,7 @@ def find_shapes_by_name(prs, slide_index, shape_name):
 
 # --- [A] Enhanced Text Style Editing ---
 
-def set_text_style(prs, slide_index, shape_id, font_size=None, color_hex=None, 
+def set_text_style(prs, slide_number, shape_id, font_size=None, color_hex=None, 
                    bold=None, italic=None, underline=None, font_name=None,
                    paragraph_index=None, char_start=None, char_end=None):
     """
@@ -51,7 +52,7 @@ def set_text_style(prs, slide_index, shape_id, font_size=None, color_hex=None,
         paragraph_index: Specific paragraph to style (0-based, None = all)
         char_start, char_end: Character range within text (None = all)
     """
-    shape = find_shape_by_id(prs, slide_index, shape_id)
+    shape = find_shape_by_id(prs, slide_number, shape_id)
     if not shape.HasTextFrame:
         return f"Error: Shape {shape_id} cannot contain text."
     
@@ -74,7 +75,7 @@ def set_text_style(prs, slide_index, shape_id, font_size=None, color_hex=None,
     return f"Successfully updated style for Shape {shape_id}."
 
 
-def set_paragraph_alignment(prs, slide_index, shape_id, alignment="left", 
+def set_paragraph_alignment(prs, slide_number, shape_id, alignment="left", 
                            line_spacing=None, space_before=None, space_after=None):
     """
     Adjusts paragraph-level formatting.
@@ -84,7 +85,7 @@ def set_paragraph_alignment(prs, slide_index, shape_id, alignment="left",
         line_spacing: Line spacing multiplier (e.g., 1.5)
         space_before/after: Points before/after paragraph
     """
-    shape = find_shape_by_id(prs, slide_index, shape_id)
+    shape = find_shape_by_id(prs, slide_number, shape_id)
     if not shape.HasTextFrame:
         return f"Error: Shape {shape_id} cannot contain text."
     
@@ -106,17 +107,17 @@ def set_paragraph_alignment(prs, slide_index, shape_id, alignment="left",
     return f"Paragraph formatting applied to Shape {shape_id}."
 
 
-def add_bullet_points(prs, slide_index, shape_id, bullet_type="bullet", 
+def manage_bullet_points(prs, slide_number, shape_id, bullet_type="bullet", 
                      bullet_char=None, start_value=1):
     """
-    Adds or modifies bullet/numbering format.
+    Adds or modifies bullet/numbering format. 
     
     Args:
         bullet_type: 'bullet', 'number', 'none'
         bullet_char: Custom bullet character
         start_value: Starting number for numbered lists
     """
-    shape = find_shape_by_id(prs, slide_index, shape_id)
+    shape = find_shape_by_id(prs, slide_number, shape_id)
     if not shape.HasTextFrame:
         return f"Error: Shape {shape_id} cannot contain text."
     
@@ -139,38 +140,38 @@ def add_bullet_points(prs, slide_index, shape_id, bullet_type="bullet",
 
 # --- [B] Enhanced Text Content Editing ---
 
-def update_text(prs, slide_index, shape_id, new_text, append=False, 
-                paragraph_index=None):
-    """
-    Updates text content with append option and paragraph targeting.
+# def update_text(prs, slide_number, shape_id, new_text, append=False, 
+#                 paragraph_index=None):
+#     """
+#     Updates text content with append option and paragraph targeting.
     
-    Args:
-        append: If True, adds to existing text instead of replacing
-        paragraph_index: Target specific paragraph (0-based)
-    """
-    shape = find_shape_by_id(prs, slide_index, shape_id)
-    if not shape.HasTextFrame:
-        return f"Error: Shape {shape_id} does not support text editing."
+#     Args:
+#         append: If True, adds to existing text instead of replacing
+#         paragraph_index: Target specific paragraph (0-based)
+#     """
+#     shape = find_shape_by_id(prs, slide_number, shape_id)
+#     if not shape.HasTextFrame:
+#         return f"Error: Shape {shape_id} does not support text editing."
     
-    if paragraph_index is not None:
-        para = shape.TextFrame.TextRange.Paragraphs(paragraph_index + 1)
-        if append:
-            para.Text = para.Text + new_text
-        else:
-            para.Text = new_text
-    else:
-        if append:
-            shape.TextFrame.TextRange.Text += new_text
-        else:
-            shape.TextFrame.TextRange.Text = new_text
+#     if paragraph_index is not None:
+#         para = shape.TextFrame.TextRange.Paragraphs(paragraph_index + 1)
+#         if append:
+#             para.Text = para.Text + new_text
+#         else:
+#             para.Text = new_text
+#     else:
+#         if append:
+#             shape.TextFrame.TextRange.Text += new_text
+#         else:
+#             shape.TextFrame.TextRange.Text = new_text
     
-    return f"Successfully updated text for Shape {shape_id}."
+#     return f"Successfully updated text for Shape {shape_id}."
 
 
-def find_and_replace(prs, slide_index, shape_id, find_text, replace_text, 
+def find_and_replace(prs, slide_number, shape_id, find_text, replace_text, 
                     match_case=False):
     """Finds and replaces text within a shape."""
-    shape = find_shape_by_id(prs, slide_index, shape_id)
+    shape = find_shape_by_id(prs, slide_number, shape_id)
     if not shape.HasTextFrame:
         return f"Error: Shape {shape_id} does not support text editing."
     
@@ -180,7 +181,6 @@ def find_and_replace(prs, slide_index, shape_id, find_text, replace_text,
         new_text = current_text.replace(find_text, replace_text)
     else:
         # Case-insensitive replace
-        import re
         new_text = re.sub(re.escape(find_text), replace_text, current_text, flags=re.IGNORECASE)
     
     shape.TextFrame.TextRange.Text = new_text
@@ -191,10 +191,10 @@ def find_and_replace(prs, slide_index, shape_id, find_text, replace_text,
 
 # --- [C] Enhanced Layout / Geometry Editing ---
 
-def adjust_layout(prs, slide_index, shape_id, left=None, top=None, 
+def adjust_layout(prs, slide_number, shape_id, left=None, top=None, 
                  width=None, height=None, rotation=None):
     """Adjusts position, size, and rotation of a shape."""
-    shape = find_shape_by_id(prs, slide_index, shape_id)
+    shape = find_shape_by_id(prs, slide_number, shape_id)
     
     if left is not None: shape.Left = left
     if top is not None: shape.Top = top
@@ -205,7 +205,7 @@ def adjust_layout(prs, slide_index, shape_id, left=None, top=None,
     return f"Successfully adjusted layout for Shape {shape_id}."
 
 
-def distribute_shapes(prs, slide_index, shape_ids, direction="horizontal", 
+def distribute_shapes(prs, slide_number, shape_ids, direction="horizontal", 
                      spacing=None):
     """
     Distributes multiple shapes evenly.
@@ -214,7 +214,7 @@ def distribute_shapes(prs, slide_index, shape_ids, direction="horizontal",
         direction: 'horizontal' or 'vertical'
         spacing: Fixed spacing between shapes (if None, distribute evenly)
     """
-    shapes = [find_shape_by_id(prs, slide_index, sid) for sid in shape_ids]
+    shapes = [find_shape_by_id(prs, slide_number, sid) for sid in shape_ids]
     
     if len(shapes) < 2:
         return "Need at least 2 shapes to distribute."
@@ -255,14 +255,14 @@ def distribute_shapes(prs, slide_index, shape_ids, direction="horizontal",
     return f"Distributed {len(shapes)} shapes {direction}ly."
 
 
-def align_shapes(prs, slide_index, shape_ids, align_type="left"):
+def align_shapes(prs, slide_number, shape_ids, align_type="left"):
     """
     Aligns multiple shapes to each other.
     
     Args:
         align_type: 'left', 'right', 'top', 'bottom', 'center_h', 'center_v'
     """
-    shapes = [find_shape_by_id(prs, slide_index, sid) for sid in shape_ids]
+    shapes = [find_shape_by_id(prs, slide_number, sid) for sid in shape_ids]
     
     if len(shapes) < 2:
         return "Need at least 2 shapes to align."
@@ -297,10 +297,10 @@ def align_shapes(prs, slide_index, shape_ids, align_type="left"):
 
 # --- [D] Enhanced Object Lifecycle ---
 
-def manage_object(prs, slide_index, action, shape_id=None, shape_type=1, 
+def manage_object(prs, slide_number, action, shape_id=None, shape_type=1, 
                  left=100, top=100, width=100, height=100, text=None):
     """Creates, deletes, or duplicates shapes."""
-    slide = prs.Slides(slide_index)
+    slide = prs.Slides(slide_number)
     
     if action == "add":
         new_shape = slide.Shapes.AddShape(shape_type, left, top, width, height)
@@ -309,11 +309,11 @@ def manage_object(prs, slide_index, action, shape_id=None, shape_type=1,
         return f"Shape created successfully (ID: {new_shape.Id})."
     
     elif action == "delete" and shape_id:
-        find_shape_by_id(prs, slide_index, shape_id).Delete()
+        find_shape_by_id(prs, slide_number, shape_id).Delete()
         return f"Shape {shape_id} deleted successfully."
     
     elif action == "duplicate" and shape_id:
-        original = find_shape_by_id(prs, slide_index, shape_id)
+        original = find_shape_by_id(prs, slide_number, shape_id)
         duplicate = original.Duplicate()
         duplicate.Left += 20  # Offset slightly
         duplicate.Top += 20
@@ -322,18 +322,18 @@ def manage_object(prs, slide_index, action, shape_id=None, shape_type=1,
     return "Invalid action or missing shape_id."
 
 
-def add_textbox(prs, slide_index, left, top, width, height, text=""):
+def add_textbox(prs, slide_number, left, top, width, height, text=""):
     """Creates a new textbox with specified text."""
-    slide = prs.Slides(slide_index)
+    slide = prs.Slides(slide_number)
     textbox = slide.Shapes.AddTextbox(1, left, top, width, height)  # msoTextOrientationHorizontal
     if text:
         textbox.TextFrame.TextRange.Text = text
     return f"Textbox created (ID: {textbox.Id})."
 
 
-def add_image(prs, slide_index, image_path, left, top, width=None, height=None):
+def add_image(prs, slide_number, image_path, left, top, width=None, height=None):
     """Inserts an image onto the slide."""
-    slide = prs.Slides(slide_index)
+    slide = prs.Slides(slide_number)
     
     if width and height:
         picture = slide.Shapes.AddPicture(image_path, False, True, left, top, width, height)
@@ -343,10 +343,10 @@ def add_image(prs, slide_index, image_path, left, top, width=None, height=None):
     return f"Image inserted (ID: {picture.Id})."
 
 
-def group_shapes(prs, slide_index, shape_ids):
+def group_shapes(prs, slide_number, shape_ids):
     """Groups multiple shapes together."""
-    slide = prs.Slides(slide_index)
-    shapes = [find_shape_by_id(prs, slide_index, sid) for sid in shape_ids]
+    slide = prs.Slides(slide_number)
+    shapes = [find_shape_by_id(prs, slide_number, sid) for sid in shape_ids]
     
     # Create shape range
     shape_range = slide.Shapes.Range([s.Id for s in shapes])
@@ -355,9 +355,9 @@ def group_shapes(prs, slide_index, shape_ids):
     return f"Grouped {len(shape_ids)} shapes (Group ID: {grouped.Id})."
 
 
-def ungroup_shapes(prs, slide_index, group_id):
+def ungroup_shapes(prs, slide_number, group_id):
     """Ungroups a grouped shape."""
-    group = find_shape_by_id(prs, slide_index, group_id)
+    group = find_shape_by_id(prs, slide_number, group_id)
     ungrouped = group.Ungroup()
     
     return f"Ungrouped shape {group_id} into {ungrouped.Count} shapes."
@@ -365,7 +365,7 @@ def ungroup_shapes(prs, slide_index, group_id):
 
 # --- [E] Enhanced Visual Style / Theme ---
 
-def apply_visual_style(prs, slide_index, shape_id, bg_color_hex=None, 
+def apply_visual_style(prs, slide_number, shape_id, bg_color_hex=None, 
                       line_color_hex=None, line_weight=None, line_style=None,
                       transparency=None, shadow=None):
     """
@@ -376,7 +376,7 @@ def apply_visual_style(prs, slide_index, shape_id, bg_color_hex=None,
         transparency: 0-1 (0=opaque, 1=transparent)
         shadow: True/False to enable/disable shadow
     """
-    shape = find_shape_by_id(prs, slide_index, shape_id)
+    shape = find_shape_by_id(prs, slide_number, shape_id)
     results = []
 
     if bg_color_hex:
@@ -412,7 +412,7 @@ def apply_visual_style(prs, slide_index, shape_id, bg_color_hex=None,
     return f"Shape {shape_id} visual style updated: " + ", ".join(results) if results else f"No changes applied to Shape {shape_id}."
 
 
-def apply_gradient_fill(prs, slide_index, shape_id, color1_hex, color2_hex, 
+def apply_gradient_fill(prs, slide_number, shape_id, color1_hex, color2_hex, 
                        gradient_type="linear", angle=0):
     """
     Applies gradient fill to a shape.
@@ -421,7 +421,7 @@ def apply_gradient_fill(prs, slide_index, shape_id, color1_hex, color2_hex,
         gradient_type: 'linear', 'radial', 'rectangular', 'path'
         angle: Gradient angle in degrees (for linear)
     """
-    shape = find_shape_by_id(prs, slide_index, shape_id)
+    shape = find_shape_by_id(prs, slide_number, shape_id)
     
     gradient_map = {'linear': 1, 'radial': 3, 'rectangular': 4, 'path': 5}
     
@@ -436,7 +436,7 @@ def apply_gradient_fill(prs, slide_index, shape_id, color1_hex, color2_hex,
     return f"Gradient applied to Shape {shape_id}."
 
 
-def set_shape_effect(prs, slide_index, shape_id, effect_type, **kwargs):
+def set_shape_effect(prs, slide_number, shape_id, effect_type, **kwargs):
     """
     Applies special effects to shapes.
     
@@ -444,7 +444,7 @@ def set_shape_effect(prs, slide_index, shape_id, effect_type, **kwargs):
         effect_type: 'glow', 'soft_edge', 'reflection', '3d'
         kwargs: Effect-specific parameters
     """
-    shape = find_shape_by_id(prs, slide_index, shape_id)
+    shape = find_shape_by_id(prs, slide_number, shape_id)
     
     if effect_type == "glow":
         color_hex = kwargs.get('color_hex', 'FFFF00')
@@ -467,10 +467,10 @@ def set_shape_effect(prs, slide_index, shape_id, effect_type, **kwargs):
 
 # --- [F] Enhanced Consistency / Polishing ---
 
-def align_to_object(prs, slide_index, target_id, base_id, side="right", margin=10):
+def align_to_object(prs, slide_number, target_id, base_id, side="right", margin=10):
     """Aligns the target shape relative to a base shape with custom margin."""
-    target = find_shape_by_id(prs, slide_index, target_id)
-    base = find_shape_by_id(prs, slide_index, base_id)
+    target = find_shape_by_id(prs, slide_number, target_id)
+    base = find_shape_by_id(prs, slide_number, base_id)
     
     if side == "right":
         target.Left = base.Left + base.Width + margin
@@ -491,10 +491,10 @@ def align_to_object(prs, slide_index, target_id, base_id, side="right", margin=1
     return f"Aligned {target_id} to the {side} of {base_id}."
 
 
-def match_formatting(prs, slide_index, source_id, target_ids):
+def match_formatting(prs, slide_number, source_id, target_ids):
     """Copies formatting from source shape to target shapes."""
-    source = find_shape_by_id(prs, slide_index, source_id)
-    targets = [find_shape_by_id(prs, slide_index, tid) for tid in target_ids]
+    source = find_shape_by_id(prs, slide_number, source_id)
+    targets = [find_shape_by_id(prs, slide_number, tid) for tid in target_ids]
     
     for target in targets:
         # Copy fill
@@ -520,14 +520,14 @@ def match_formatting(prs, slide_index, source_id, target_ids):
     return f"Formatting copied from {source_id} to {len(target_ids)} shape(s)."
 
 
-def set_z_order(prs, slide_index, shape_id, order="bring_to_front"):
+def set_z_order(prs, slide_number, shape_id, order="bring_to_front"):
     """
     Changes the z-order (layering) of a shape.
     
     Args:
         order: 'bring_to_front', 'send_to_back', 'bring_forward', 'send_backward'
     """
-    shape = find_shape_by_id(prs, slide_index, shape_id)
+    shape = find_shape_by_id(prs, slide_number, shape_id)
     
     if order == "bring_to_front":
         shape.ZOrder(0)  # msoBringToFront
@@ -561,32 +561,32 @@ def add_slide(prs, layout_index=1, position=None):
     return f"Slide added at position {new_slide.SlideIndex}."
 
 
-def delete_slide(prs, slide_index):
+def delete_slide(prs, slide_number):
     """Deletes a specific slide."""
-    prs.Slides(slide_index).Delete()
-    return f"Slide {slide_index} deleted."
+    prs.Slides(slide_number).Delete()
+    return f"Slide {slide_number} deleted."
 
 
-def duplicate_slide(prs, slide_index):
+def duplicate_slide(prs, slide_number):
     """Duplicates a specific slide."""
-    original = prs.Slides(slide_index)
+    original = prs.Slides(slide_number)
     duplicate = original.Duplicate()
-    return f"Slide {slide_index} duplicated to position {duplicate.SlideIndex}."
+    return f"Slide {slide_number} duplicated to position {duplicate.SlideIndex}."
 
 
 # --- [H] Table Operations ---
 
-def add_table(prs, slide_index, rows, cols, left, top, width, height):
+def add_table(prs, slide_number, rows, cols, left, top, width, height):
     """Creates a table on the slide."""
-    slide = prs.Slides(slide_index)
+    slide = prs.Slides(slide_number)
     table = slide.Shapes.AddTable(rows, cols, left, top, width, height)
     return f"Table created (ID: {table.Id}, {rows}x{cols})."
 
 
-def update_table_cell(prs, slide_index, table_id, row, col, text, 
+def update_table_cell(prs, slide_number, table_id, row, col, text, 
                      font_size=None, color_hex=None, bg_color_hex=None):
     """Updates content and style of a specific table cell."""
-    table_shape = find_shape_by_id(prs, slide_index, table_id)
+    table_shape = find_shape_by_id(prs, slide_number, table_id)
     
     if not table_shape.HasTable:
         return f"Error: Shape {table_id} is not a table."
@@ -606,7 +606,7 @@ def update_table_cell(prs, slide_index, table_id, row, col, text,
 
 # --- [I] Animation & Transition ---
 
-def add_animation(prs, slide_index, shape_id, effect_type="appear", 
+def add_animation(prs, slide_number, shape_id, effect_type="appear", 
                  trigger="on_click", duration=1.0):
     """
     Adds animation to a shape.
@@ -616,8 +616,8 @@ def add_animation(prs, slide_index, shape_id, effect_type="appear",
         trigger: 'on_click', 'with_previous', 'after_previous'
         duration: Animation duration in seconds
     """
-    slide = prs.Slides(slide_index)
-    shape = find_shape_by_id(prs, slide_index, shape_id)
+    slide = prs.Slides(slide_number)
+    shape = find_shape_by_id(prs, slide_number, shape_id)
     
     effect_map = {
         'appear': 1,  # msoAnimEffectAppear
@@ -634,7 +634,7 @@ def add_animation(prs, slide_index, shape_id, effect_type="appear",
     return f"Animation '{effect_type}' added to Shape {shape_id}."
 
 
-def set_slide_transition(prs, slide_index, transition_type="fade", 
+def set_slide_transition(prs, slide_number, transition_type="fade", 
                         duration=1.0, advance_on_time=None):
     """
     Sets slide transition effect.
@@ -644,7 +644,7 @@ def set_slide_transition(prs, slide_index, transition_type="fade",
         duration: Transition duration in seconds
         advance_on_time: Auto-advance after N seconds (None = manual)
     """
-    slide = prs.Slides(slide_index)
+    slide = prs.Slides(slide_number)
     
     transition_map = {
         'fade': 1,
@@ -662,9 +662,28 @@ def set_slide_transition(prs, slide_index, transition_type="fade",
     else:
         slide.SlideShowTransition.AdvanceOnClick = True
     
-    return f"Transition '{transition_type}' applied to slide {slide_index}."
+    return f"Transition '{transition_type}' applied to slide {slide_number}."
 
 
+
+
+#보류#
+    # {
+    #     "type": "function",
+    #     "name": "update_text",
+    #     "description": "Updates or appends text in a shape, optionally targeting a paragraph.",
+    #     "parameters": {
+    #         "type": "object",
+    #         "properties": {
+    #             "slide_number": {"type": "integer"},
+    #             "shape_id": {"type": "integer"},
+    #             "new_text": {"type": "string"},
+    #             "append": {"type": "boolean"},
+    #             "paragraph_index": {"type": "integer"}
+    #         },
+    #         "required": ["slide_number", "shape_id", "new_text"]
+    #     }
+    # },
 # --- Complete Tool Schema ---
 TOOLS_SCHEMA = [
 
@@ -673,69 +692,63 @@ TOOLS_SCHEMA = [
     # =========================
     {
         "type": "function",
-        "function": {
-            "name": "set_text_style",
-            "description": "Precisely adjusts text styles including font, size, color, bold, italic, underline. Supports partial text selection.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "slide_index": {"type": "integer"},
-                    "shape_id": {"type": "integer"},
-                    "font_size": {"type": "number"},
-                    "color_hex": {"type": "string"},
-                    "bold": {"type": "boolean"},
-                    "italic": {"type": "boolean"},
-                    "underline": {"type": "boolean"},
-                    "font_name": {"type": "string"},
-                    "paragraph_index": {"type": "integer"},
-                    "char_start": {"type": "integer"},
-                    "char_end": {"type": "integer"}
-                },
-                "required": ["slide_index", "shape_id"]
-            }
+        "name": "set_text_style",
+        "description": "Precisely adjusts text styles including font, size, color, bold, italic, underline. Supports partial text selection.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "shape_id": {"type": "integer"},
+                "font_size": {"type": "number"},
+                "color_hex": {"type": "string"},
+                "bold": {"type": "boolean"},
+                "italic": {"type": "boolean"},
+                "underline": {"type": "boolean"},
+                "font_name": {"type": "string"},
+                "paragraph_index": {"type": "integer"},
+                "char_start": {"type": "integer"},
+                "char_end": {"type": "integer"}
+            },
+            "required": ["slide_number", "shape_id"]
         }
     },
     {
         "type": "function",
-        "function": {
-            "name": "set_paragraph_alignment",
-            "description": "Sets paragraph alignment and spacing options.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "slide_index": {"type": "integer"},
-                    "shape_id": {"type": "integer"},
-                    "alignment": {
-                        "type": "string",
-                        "enum": ["left", "center", "right", "justify", "distribute"]
-                    },
-                    "line_spacing": {"type": "number"},
-                    "space_before": {"type": "number"},
-                    "space_after": {"type": "number"}
+        "name": "set_paragraph_alignment",
+        "description": "Sets paragraph alignment and spacing options.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "shape_id": {"type": "integer"},
+                "alignment": {
+                    "type": "string",
+                    "enum": ["left", "center", "right", "justify", "distribute"]
                 },
-                "required": ["slide_index", "shape_id"]
-            }
+                "line_spacing": {"type": "number"},
+                "space_before": {"type": "number"},
+                "space_after": {"type": "number"}
+            },
+            "required": ["slide_number", "shape_id"]
         }
     },
     {
         "type": "function",
-        "function": {
-            "name": "add_bullet_points",
-            "description": "Applies bullet or numbering styles to text.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "slide_index": {"type": "integer"},
-                    "shape_id": {"type": "integer"},
-                    "bullet_type": {
-                        "type": "string",
-                        "enum": ["bullet", "number", "none"]
-                    },
-                    "bullet_char": {"type": "string"},
-                    "start_value": {"type": "integer"}
+        "name": "manage_bullet_points",
+        "description": "Applies bullet or numbering styles to text.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "shape_id": {"type": "integer"},
+                "bullet_type": {
+                    "type": "string",
+                    "enum": ["bullet", "number", "none"]
                 },
-                "required": ["slide_index", "shape_id"]
-            }
+                "bullet_char": {"type": "string"},
+                "start_value": {"type": "integer"}
+            },
+            "required": ["slide_number", "shape_id"]
         }
     },
 
@@ -744,38 +757,18 @@ TOOLS_SCHEMA = [
     # =========================
     {
         "type": "function",
-        "function": {
-            "name": "update_text",
-            "description": "Updates or appends text in a shape, optionally targeting a paragraph.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "slide_index": {"type": "integer"},
-                    "shape_id": {"type": "integer"},
-                    "new_text": {"type": "string"},
-                    "append": {"type": "boolean"},
-                    "paragraph_index": {"type": "integer"}
-                },
-                "required": ["slide_index", "shape_id", "new_text"]
-            }
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "find_and_replace",
-            "description": "Finds and replaces text within a shape.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "slide_index": {"type": "integer"},
-                    "shape_id": {"type": "integer"},
-                    "find_text": {"type": "string"},
-                    "replace_text": {"type": "string"},
-                    "match_case": {"type": "boolean"}
-                },
-                "required": ["slide_index", "shape_id", "find_text", "replace_text"]
-            }
+        "name": "find_and_replace",
+        "description": "Finds and replaces text within a shape.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "shape_id": {"type": "integer"},
+                "find_text": {"type": "string"},
+                "replace_text": {"type": "string"},
+                "match_case": {"type": "boolean"}
+            },
+            "required": ["slide_number", "shape_id", "find_text", "replace_text"]
         }
     },
 
@@ -784,67 +777,61 @@ TOOLS_SCHEMA = [
     # =========================
     {
         "type": "function",
-        "function": {
-            "name": "adjust_layout",
-            "description": "Adjusts shape position, size, and rotation.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "slide_index": {"type": "integer"},
-                    "shape_id": {"type": "integer"},
-                    "left": {"type": "number"},
-                    "top": {"type": "number"},
-                    "width": {"type": "number"},
-                    "height": {"type": "number"},
-                    "rotation": {"type": "number"}
-                },
-                "required": ["slide_index", "shape_id"]
-            }
+        "name": "adjust_layout",
+        "description": "Adjusts shape position, size, and rotation.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "shape_id": {"type": "integer"},
+                "left": {"type": "number"},
+                "top": {"type": "number"},
+                "width": {"type": "number"},
+                "height": {"type": "number"},
+                "rotation": {"type": "number"}
+            },
+            "required": ["slide_number", "shape_id"]
         }
     },
     {
         "type": "function",
-        "function": {
-            "name": "distribute_shapes",
-            "description": "Distributes multiple shapes evenly.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "slide_index": {"type": "integer"},
-                    "shape_ids": {
-                        "type": "array",
-                        "items": {"type": "integer"}
-                    },
-                    "direction": {
-                        "type": "string",
-                        "enum": ["horizontal", "vertical"]
-                    },
-                    "spacing": {"type": "number"}
+        "name": "distribute_shapes",
+        "description": "Distributes multiple shapes evenly.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "shape_ids": {
+                    "type": "array",
+                    "items": {"type": "integer"}
                 },
-                "required": ["slide_index", "shape_ids"]
-            }
+                "direction": {
+                    "type": "string",
+                    "enum": ["horizontal", "vertical"]
+                },
+                "spacing": {"type": "number"}
+            },
+            "required": ["slide_number", "shape_ids"]
         }
     },
     {
         "type": "function",
-        "function": {
-            "name": "align_shapes",
-            "description": "Aligns multiple shapes relative to each other.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "slide_index": {"type": "integer"},
-                    "shape_ids": {
-                        "type": "array",
-                        "items": {"type": "integer"}
-                    },
-                    "align_type": {
-                        "type": "string",
-                        "enum": ["left", "right", "top", "bottom", "center_h", "center_v"]
-                    }
+        "name": "align_shapes",
+        "description": "Aligns multiple shapes relative to each other.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "shape_ids": {
+                    "type": "array",
+                    "items": {"type": "integer"}
                 },
-                "required": ["slide_index", "shape_ids"]
-            }
+                "align_type": {
+                    "type": "string",
+                    "enum": ["left", "right", "top", "bottom", "center_h", "center_v"]
+                }
+            },
+            "required": ["slide_number", "shape_ids"]
         }
     },
 
@@ -853,46 +840,42 @@ TOOLS_SCHEMA = [
     # =========================
     {
         "type": "function",
-        "function": {
-            "name": "manage_object",
-            "description": "Creates, deletes, or duplicates a shape.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "slide_index": {"type": "integer"},
-                    "action": {
-                        "type": "string",
-                        "enum": ["add", "delete", "duplicate"]
-                    },
-                    "shape_id": {"type": "integer"},
-                    "shape_type": {"type": "integer"},
-                    "left": {"type": "number"},
-                    "top": {"type": "number"},
-                    "width": {"type": "number"},
-                    "height": {"type": "number"},
-                    "text": {"type": "string"}
+        "name": "manage_object",
+        "description": "Creates, deletes, or duplicates a shape.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "action": {
+                    "type": "string",
+                    "enum": ["add", "delete", "duplicate"]
                 },
-                "required": ["slide_index", "action"]
-            }
+                "shape_id": {"type": "integer"},
+                "shape_type": {"type": "integer"},
+                "left": {"type": "number"},
+                "top": {"type": "number"},
+                "width": {"type": "number"},
+                "height": {"type": "number"},
+                "text": {"type": "string"}
+            },
+            "required": ["slide_number", "action"]
         }
     },
     {
         "type": "function",
-        "function": {
-            "name": "add_textbox",
-            "description": "Adds a textbox to a slide.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "slide_index": {"type": "integer"},
-                    "left": {"type": "number"},
-                    "top": {"type": "number"},
-                    "width": {"type": "number"},
-                    "height": {"type": "number"},
-                    "text": {"type": "string"}
-                },
-                "required": ["slide_index", "left", "top", "width", "height"]
-            }
+        "name": "add_textbox",
+        "description": "Adds a textbox to a slide.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "left": {"type": "number"},
+                "top": {"type": "number"},
+                "width": {"type": "number"},
+                "height": {"type": "number"},
+                "text": {"type": "string"}
+            },
+            "required": ["slide_number", "left", "top", "width", "height"]
         }
     },
 
@@ -901,48 +884,44 @@ TOOLS_SCHEMA = [
     # =========================
     {
         "type": "function",
-        "function": {
-            "name": "apply_visual_style",
-            "description": "Applies fill, line, transparency, and shadow styles.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "slide_index": {"type": "integer"},
-                    "shape_id": {"type": "integer"},
-                    "bg_color_hex": {"type": "string"},
-                    "line_color_hex": {"type": "string"},
-                    "line_weight": {"type": "number"},
-                    "line_style": {
-                        "type": "string",
-                        "enum": ["solid", "dash", "dot", "dash_dot"]
-                    },
-                    "transparency": {"type": "number"},
-                    "shadow": {"type": "boolean"}
+        "name": "apply_visual_style",
+        "description": "Applies fill, line, transparency, and shadow styles.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "shape_id": {"type": "integer"},
+                "bg_color_hex": {"type": "string"},
+                "line_color_hex": {"type": "string"},
+                "line_weight": {"type": "number"},
+                "line_style": {
+                    "type": "string",
+                    "enum": ["solid", "dash", "dot", "dash_dot"]
                 },
-                "required": ["slide_index", "shape_id"]
-            }
+                "transparency": {"type": "number"},
+                "shadow": {"type": "boolean"}
+            },
+            "required": ["slide_number", "shape_id"]
         }
     },
     {
         "type": "function",
-        "function": {
-            "name": "apply_gradient_fill",
-            "description": "Applies a gradient fill to a shape.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "slide_index": {"type": "integer"},
-                    "shape_id": {"type": "integer"},
-                    "color1_hex": {"type": "string"},
-                    "color2_hex": {"type": "string"},
-                    "gradient_type": {
-                        "type": "string",
-                        "enum": ["linear", "radial", "rectangular", "path"]
-                    },
-                    "angle": {"type": "number"}
+        "name": "apply_gradient_fill",
+        "description": "Applies a gradient fill to a shape.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "shape_id": {"type": "integer"},
+                "color1_hex": {"type": "string"},
+                "color2_hex": {"type": "string"},
+                "gradient_type": {
+                    "type": "string",
+                    "enum": ["linear", "radial", "rectangular", "path"]
                 },
-                "required": ["slide_index", "shape_id", "color1_hex", "color2_hex"]
-            }
+                "angle": {"type": "number"}
+            },
+            "required": ["slide_number", "shape_id", "color1_hex", "color2_hex"]
         }
     },
 
@@ -951,54 +930,50 @@ TOOLS_SCHEMA = [
     # =========================
     {
         "type": "function",
-        "function": {
-            "name": "add_slide",
-            "description": "Adds a new slide.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "layout_index": {"type": "integer"},
-                    "position": {"type": "integer"}
-                }
+        "name": "add_slide",
+        "description": "Adds a new slide.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "layout_index": {"type": "integer"},
+                "position": {"type": "integer"}
             }
         }
     },
     {
         "type": "function",
-        "function": {
-            "name": "delete_slide",
-            "description": "Deletes a slide.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "slide_index": {"type": "integer"}
-                },
-                "required": ["slide_index"]
-            }
+        "name": "delete_slide",
+        "description": "Deletes a slide.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"}
+            },
+            "required": ["slide_number"]
         }
     },
     {
         "type": "function",
-        "function": {
-            "name": "duplicate_slide",
-            "description": "Duplicates a slide.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "slide_index": {"type": "integer"}
-                },
-                "required": ["slide_index"]
-            }
+        "name": "duplicate_slide",
+        "description": "Duplicates a slide.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"}
+            },
+            "required": ["slide_number"]
         }
     }
 ]
 
 
+
+    # "update_text": update_text,
 FUNCTION_MAP = {
     "set_text_style": set_text_style,
     "set_paragraph_alignment": set_paragraph_alignment,
-    "add_bullet_points": add_bullet_points,
-    "update_text": update_text,
+    "manage_bullet_points": manage_bullet_points,
+
     "find_and_replace": find_and_replace,
     "adjust_layout": adjust_layout,
     "distribute_shapes": distribute_shapes,

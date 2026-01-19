@@ -2,46 +2,58 @@ import win32com.client
 import pywintypes
 import openai
 from openai import OpenAI
-import re
 
-import json
 import re
+import json
 import ast
+import time
+
+from logtime import *
+from msoffice_map import *
+
 
 def parse_llm_response(response):
     """
-    Robustly parse JSON or Python-like structures from an LLM response.
-    Returns the loaded object (dict or list), or None if parsing fails.
-    """
-    if not response or not isinstance(response, str):
-        print('response is empty or not a string')
-        print(type(response))
-        return None
+    Parse JSON or Python-like structures from an LLM response.
 
-    # Remove markdown code fences
+    Returns:
+    - (parsed_obj, None) on success
+    - (None, (exception, payload_or_response)) on failure
+    """
+
+    # 1. 입력 검증
+    if not response or not isinstance(response, str):
+        e = ValueError("response is empty or not a string")
+        return None, (e, response)
+
+    # 2. 마크다운 코드펜스 제거
     response_clean = re.sub(r'```(?:json)?', '', response).strip()
 
-    # Extract JSON or Python literal between the first { } or [ ]
+    # 3. JSON / list 추출
     match = re.search(r'(\{.*\}|\[.*\])', response_clean, re.DOTALL)
     if not match:
-        return None
+        e = ValueError("No JSON object could be decoded")
+        return None, (e, response_clean)
 
     payload = match.group(1)
 
-    # Remove trailing commas before } or ]
+    # 4. trailing comma 제거
     payload = re.sub(r',\s*([\}\]])', r'\1', payload)
 
-    # Attempt JSON load
     try:
-        return json.loads(payload)
-    except json.JSONDecodeError:
-        # Fallback to Python literal eval
+        parsed = json.loads(payload)
+        return parsed, None
+    except json.JSONDecodeError as e_json:
+        # 7. Python literal fallback
         try:
-            return ast.literal_eval(payload)
-        except Exception:
-            return None
+            parsed = ast.literal_eval(payload)
+            return parsed, None
+        except Exception as e_ast:
+            return None, (e_ast, payload)
 
-    
+
+
+
 def extract_content_after_edit(plan_json):
     result = []
     
@@ -149,32 +161,30 @@ def _call_gpt_api(prompt: str, api_key: str, model: str):
     return text, inp_toks, out_toks, total_cost
 
 
-def get_simple_powerpoint_info():
-    """
-    현재 열려있는 PowerPoint의 페이지 수와 파일 이름만 가져옵니다.
-    """
-    try:
-        # PowerPoint 애플리케이션에 연결
-        ppt_app = win32com.client.GetObject(Class="PowerPoint.Application")
+def get_simple_powerpoint_info(max_retries=3, delay_seconds=1):
+    for attempt in range(1, max_retries + 1):
+        try:
+            # PowerPoint 애플리케이션에 연결
+            ppt_app = win32com.client.GetObject(Class="PowerPoint.Application")
+            
+            if not ppt_app or not hasattr(ppt_app, 'ActivePresentation'):
+                raise RuntimeError("PowerPoint가 실행 중이 아니거나 열린 프레젠테이션이 없습니다.")
+            
+            presentation = ppt_app.ActivePresentation
+            
+            file_name = presentation.Name
+            slide_count = presentation.Slides.Count
+            
+            return {
+                "파일 이름": file_name,
+                "슬라이드 수": slide_count
+            }
         
-        # PowerPoint가 실행 중이고 열린 프레젠테이션이 있는지 확인
-        if not ppt_app or not hasattr(ppt_app, 'ActivePresentation'):
-            return "PowerPoint가 실행 중이 아니거나 열린 프레젠테이션이 없습니다."
-        
-        # 활성 프레젠테이션 가져오기
-        presentation = ppt_app.ActivePresentation
-        
-        # 파일 이름과 페이지 수 가져오기
-        file_name = presentation.Name
-        slide_count = presentation.Slides.Count
-        
-        return {
-            "파일 이름": file_name,
-            "슬라이드 수": slide_count
-        }
-        
-    except Exception as e:
-        return f"오류 발생: {str(e)}"
+        except Exception as e:
+            print(f"{attempt}번째 시도에서 오류 발생: {e}")
+
+            if attempt < max_retries:
+                time.sleep(delay_seconds)
 
 
 def get_shape_type(shape_type):
@@ -233,7 +243,6 @@ def get_placeholder_type(placeholder_type):
 import win32com.client
 import traceback  # 오류 추적을 위해 추가
 
-# --- Helper Functions (디버깅 추가) ---
 
 def safe(obj, attr, default=None):
     """Safely get an attribute, returning default if an error occurs."""
@@ -296,7 +305,7 @@ def snap(font):
 
 def make_run_dict(text_range_segment):
     if text_range_segment is None:
-        return {"Text": "", "Font": {}, "Hyperlink": None}
+        return {"Text": "", "Font": {}}
     f = safe(text_range_segment, "Font")
     text = safe(text_range_segment, "Text", "")
     font_dict = {}
@@ -329,8 +338,61 @@ def make_run_dict(text_range_segment):
     except Exception:
         pass
 
-    return {"Text": text, "Font": font_dict, "Hyperlink": hyperlink}
+    return {"Text": text, "Font": font_dict, "Hyperlink": hyperlink} if hyperlink else {"Text": text, "Font": font_dict}    
 
+def parse_paragraph_bullets(text_frame):
+    """
+    TextFrame에서 문단 단위의 bullet 정보를 추출
+    - Bullet 여부
+    - 들여쓰기 정보
+    - Bullet Level (파워포인트 단락 레벨)
+    """
+    result = []
+
+    if not safe(text_frame, "HasText", False):
+        return result
+
+    tr = safe(text_frame, "TextRange")
+    if not tr:
+        return result
+
+    try:
+        para_count = tr.Paragraphs().Count
+    except Exception:
+        return result
+
+    for i in range(1, para_count + 1):
+        try:
+            p = tr.Paragraphs(i)
+            pf = safe(p, "ParagraphFormat")
+            bullet = safe(pf, "Bullet")
+
+            has_bullet = bool(safe(bullet, "Visible", False))
+
+            if has_bullet and bullet:
+                para_info = {
+                    "ParagraphIndex": i,
+                    "Text": safe(p, "Text", "").rstrip("\r\n"),
+                    "HasBullet": has_bullet,
+                    "Level": safe(p, "Level"),
+                }
+
+                para_info.update({
+                    "BulletCharacter": safe(bullet, "Character"),
+                    "BulletType": safe(bullet, "Type"),
+                    "BulletRelativeSize": safe(bullet, "RelativeSize"),
+                    "BulletFontName": safe(safe(bullet, "Font"), "Name"),
+                })
+
+                # 들여쓰기(참고용)
+                para_info["FirstLineIndent"] = safe(pf, "FirstLineIndent")
+                para_info["LeftIndent"] = safe(pf, "LeftIndent")
+
+                result.append(para_info)
+        except Exception:
+            continue
+
+    return result
 
 def parse_text_frame_debug(text_frame):
     out = {"Has Text": False}
@@ -341,14 +403,17 @@ def parse_text_frame_debug(text_frame):
         return out
     full = safe(tr, "Text", "")
     out.update({"Has Text": True, "Text": full, "Runs": []})
+
     if not full:
+        out["Paragraphs"] = []
         return out
+
     runs = []
     n = len(full)
     try:
         cur_idx = 1
         cur_snap = snap(safe(tr.Characters(cur_idx, 1), "Font"))
-        for i in range(2, n+1):
+        for i in range(2, n + 1):
             nxt_snap = snap(safe(tr.Characters(i, 1), "Font"))
             if nxt_snap != cur_snap:
                 seg_len = i - cur_idx
@@ -363,9 +428,13 @@ def parse_text_frame_debug(text_frame):
         print(f"Error parsing runs: {e}")
         traceback.print_exc()
         runs.append(make_run_dict(tr))
-    out["Runs"] = runs
-    return out
 
+    out["Runs"] = runs
+
+    # 🔹 여기서 문단/글머리표 정보 추가
+    out["Paragraphs"] = parse_paragraph_bullets(text_frame)
+
+    return out
 
 
 
@@ -437,27 +506,94 @@ def parse_chart(chart):
     return result
 
 
+# def parse_group_shapes(group_shape):
+#     """그룹 내부 Shape 정보 파싱 (결과를 dict로 반환)"""
+#     result = {}
+#     try:
+#         count = getattr(group_shape.GroupItems, "Count", 0)
+#         result["Group Items Count"] = count
+#         items = {}
+#         for i in range(1, min(count, 3) + 1):
+#             try:
+#                 sub = group_shape.GroupItems.Item(i)
+#                 items[f"Item {i}"] = {
+#                     "Name": getattr(sub, "Name", None),
+#                     "Type": getattr(sub, "Type", None)
+#                 }
+#             except Exception:
+#                 items[f"Item {i}"] = None
+#         result["Items"] = items
+
+#     except Exception as e:
+#         result["Group Parsing Error"] = str(e)
+#     return result
+
 def parse_group_shapes(group_shape):
-    """그룹 내부 Shape 정보 파싱 (결과를 dict로 반환)"""
-    result = {}
+    """
+    Group 내부의 모든 Shape을 재귀적으로 파싱
+    """
+    result = []
+
     try:
-        count = getattr(group_shape.GroupItems, "Count", 0)
-        result["Group Items Count"] = count
-        items = {}
-        for i in range(1, min(count, 3) + 1):
-            try:
-                sub = group_shape.GroupItems.Item(i)
-                items[f"Item {i}"] = {
-                    "Name": getattr(sub, "Name", None),
-                    "Type": getattr(sub, "Type", None)
+        group_items = group_shape.GroupItems
+        count = group_items.Count
+
+        for i in range(1, count + 1):
+            sub = group_items.Item(i)
+
+            sid = sub.Id
+            name = sub.Name
+            stype = sub.Type
+            left = sub.Left
+            top = sub.Top
+            width = sub.Width
+            height = sub.Height
+
+            item_info = {
+                "Shape_Id": sid,
+                "Name": name,
+                "Type": SHAPE_TYPE_MAP.get(stype, stype),
+                "Position_Left": left,
+                "Position_Top": top,
+                "Size_Width": width,
+                "Size_Height": height,
+            }
+
+            # ---- 텍스트 ----
+            if sub.HasTextFrame: # text
+                tf = sub.TextFrame
+                if tf.HasText:
+                    item_info["Text"] = extract_text_from_shape(sub)
+
+            if stype == 6:  # msoGroup
+                item_info["GroupItems"] = parse_group_shapes(sub)
+
+            elif stype == 13:  # Picture
+                item_info["Picture"] = {
+                    "AlternativeText": sub.AlternativeText
                 }
-            except Exception:
-                items[f"Item {i}"] = None
-        result["Items"] = items
+
+            elif stype == 3:  # Chart
+                chart = sub.Chart
+                item_info["Chart"] = {
+                    "ChartType": chart.ChartType,
+                    "HasTitle": chart.HasTitle
+                }
+
+            elif stype == 19:  # Table
+                table = sub.Table
+                item_info["Table"] = {
+                    "Rows": table.Rows.Count,
+                    "Columns": table.Columns.Count
+                }
+
+            result.append(item_info)
 
     except Exception as e:
-        result["Group Parsing Error"] = str(e)
+        return {"Group Parsing Error": str(e)}
+
     return result
+
 
 
 def parse_picture(picture):
@@ -558,17 +694,23 @@ def parse_shape_details(shape):
     # debug 파싱 함수로부터 runs 정보 얻기
     parsed = parse_text_frame_debug(tf)
     runs = parsed.get("Runs", [])
+    paras = parsed.get("Paragraphs", [])
 
     # result["TextFrame"] 에 run 별로 저장
-    result["TextFrame"] = []
+    result["TextFrame"] = {
+    "FullText": parsed.get("Text", ""),
+    "Runs": [],
+    "Paragraphs": paras,   
+}
     for idx, run in enumerate(runs, start=1):
         # 원하는 속성만 골라 담거나, run 전체를 그대로 담을 수도 있습니다.
         run_info = {
             "RunIndex": idx,
             "Text": run.get("Text", ""),
-            "Font": run.get("Font")
+            "Font": run.get("Font"),
+            "Hyperlink": run.get("Hyperlink")
         }
-        result["TextFrame"].append("run_info")
+        result["TextFrame"]["Runs"].append(run_info)
     
 
     # Placeholder
@@ -656,6 +798,7 @@ def parse_slide_properties(slide):
         # Layout 은 COM 상에서 단순 enum(int) 이므로
         # .Type/.Name 을 호출하면 int 에서 에러가 남.
         # 대신 코드값만 저장하고, CustomLayout 객체를 쓰세요.
+
         layout_code = getattr(slide, "Layout", None)
         if layout_code is not None:
             result["Slide Layout Code"] = layout_code
@@ -691,70 +834,10 @@ def parse_slide_properties(slide):
 
 
 
-def parse_active_slide_objects(slide_num:int=1):
-    """슬라이드 객체 파싱 메인 함수"""
-    output = {} # 출력을 저장할 문자열 초기화
-    
-    try:
-        # Connect to running PowerPoint instance
-        ppt = win32com.client.GetObject(Class="PowerPoint.Application")
-        
-        # Get active presentation
-        presentation = ppt.ActivePresentation
-        
-        # Check if there is an active presentation
-        if not presentation:
-            output['status'] = "No active presentation found."
-            return output['status']
-        
-        # 프레젠테이션 정보 추가
-        output["Presentation_Name"] = f"{presentation.Name}"
-        output["Total_Slide_Number"] = f"{presentation.Slides.Count}"
-        
-        # 슬라이드 범위 확인
-        if slide_num > presentation.Slides.Count or slide_num < 1:
-            output["status"] = f"Invalid slide number. Please provide a number between 1 and {presentation.Slides.Count}."
-            return output["status"]
-        
-        # Access the specified slide
-        slide = presentation.Slides(slide_num)
-        
-        # 슬라이드 속성 파싱
-        output["Slide_Properties"] = parse_slide_properties(slide)
-        
-        # Get the number of shapes in the slide
-        shape_count = slide.Shapes.Count
-        output["Objects_Overview"] = f"Found {shape_count} objects in slide number {slide_num}."
-        output["Objects_Detail"] = []
-
-        # Iterate through each shape
-        for i in range(1, shape_count + 1):
-            shape = slide.Shapes(i)
-            shape_info = {
-                "Object_number": i,
-                "Shape_Id": shape.Id,
-                "Name": shape.Name,
-                "Type": get_shape_type(shape.Type),
-                "Position_Left": shape.Left,
-                "Position_Top": shape.Top,
-                "Size_Width": shape.Width,
-                "Size_Height": shape.Height,
-                "More_detail": parse_shape_details(shape),
-                
-            }
-            output["Objects_Detail"].append(shape_info)
-        
-        # 슬라이드 노트 파싱
-        output["Slide_Notes"] = parse_slide_notes(slide)
-    except pywintypes.com_error as e:
-        output["Error"] = f"COM error: {e}"
-    # except Exception as e:
-    #     output["Error"] = f"Error: {e}"
-
-    return output
-
 # def parse_active_slide_objects(slide_num:int=1):
-#     output = ""  # 출력을 저장할 문자열 초기화
+#     """슬라이드 객체 파싱 메인 함수"""
+#     output = {} # 출력을 저장할 문자열 초기화
+    
 #     try:
 #         # Connect to running PowerPoint instance
 #         ppt = win32com.client.GetObject(Class="PowerPoint.Application")
@@ -764,69 +847,127 @@ def parse_active_slide_objects(slide_num:int=1):
         
 #         # Check if there is an active presentation
 #         if not presentation:
-#             output += "No active presentation found."
-#             return output
+#             output['status'] = "No active presentation found."
+#             return output['status']
         
-#         # Access the first slide
+#         # 프레젠테이션 정보 추가
+#         output["Presentation_Name"] = f"{presentation.Name}"
+#         output["Total_Slide_Number"] = f"{presentation.Slides.Count}"
+        
+#         # 슬라이드 범위 확인
+#         if slide_num > presentation.Slides.Count or slide_num < 1:
+#             output["status"] = f"Invalid slide number. Please provide a number between 1 and {presentation.Slides.Count}."
+#             return output["status"]
+        
+#         # Access the specified slide
 #         slide = presentation.Slides(slide_num)
+        
+#         # 슬라이드 속성 파싱
+#         output["Slide_Properties"] = parse_slide_properties(slide)
         
 #         # Get the number of shapes in the slide
 #         shape_count = slide.Shapes.Count
-#         output += f"Found {shape_count} objects in the slide number {slide_num}."
-        
+#         output["Objects_Overview"] = f"Found {shape_count} objects in slide number {slide_num}."
+#         output["Objects_Detail"] = []
+
 #         # Iterate through each shape
 #         for i in range(1, shape_count + 1):
 #             shape = slide.Shapes(i)
-#             output += f"\nObject {i}:"
-#             output += f"\n  Name: {shape.Name}"
-#             output += f"\n  Type: {get_shape_type(shape.Type)}"
-#             output += f"\n  Position: Left={shape.Left}, Top={shape.Top}"
-#             output += f"\n  Size: Width={shape.Width}, Height={shape.Height}"
-            
-#             # Parse details based on shape type
-#             output += parse_shape_details(shape)
+#             shape_info = {
+#                 "Object_number": i,
+#                 "Shape_Id": shape.Id,
+#                 "Name": shape.Name,
+#                 "Type": get_shape_type(shape.Type),
+#                 "Position_Left": shape.Left,
+#                 "Position_Top": shape.Top,
+#                 "Size_Width": shape.Width,
+#                 "Size_Height": shape.Height,
+#                 "More_detail": parse_shape_details(shape),
                 
-#         output += "\nParsing complete."
+#             }
+#             output["Objects_Detail"].append(shape_info)
         
+#         # 슬라이드 노트 파싱
+#         output["Slide_Notes"] = parse_slide_notes(slide)
 #     except pywintypes.com_error as e:
-#         output += f"COM error: {e}"
-#     except Exception as e:
-#         output += f"Error: {e}"
-    
+#         output["Error"] = f"COM error: {e}"
+#     # except Exception as e:
+#     #     output["Error"] = f"Error: {e}"
+
 #     return output
 
-def get_shape_type(type_val):
-    # Map shape type values to readable names
-    # Official documentation: https://learn.microsoft.com/en-us/office/vba/api/office.msoshapetype
-    shape_types = {
-        1: "AutoShape",
-        2: "Callout",
-        3: "Chart",
-        4: "Comment",
-        5: "Freeform",
-        6: "Group",
-        7: "Embedded OLE Object",
-        8: "Form Control",
-        9: "Line",
-        10: "Linked OLE Object",
-        11: "Linked Picture",
-        12: "OLE Control Object",
-        13: "Picture",
-        14: "Placeholder",
-        15: "Text Effect",
-        16: "Media",
-        17: "Text Box",
-        18: "Script Anchor",
-        19: "Table",
-        20: "Canvas",
-        21: "Diagram",
-        22: "Ink",
-        23: "Ink Comment",
-        24: "Smart Art",
-        25: "Web Video",
-        26: "Content App"
-    }
-    return shape_types.get(type_val, f"Unknown Type ({type_val})")
+def parse_active_slide_objects(slide_num: int, prs_obj):
+    """
+    Parse Every Object Information from a Slide.
+    Args:
+        slide_num (int): 파싱할 슬라이드 번호 (1-based)
+        prs_obj: PPTContainer.prs 또는 win32com Presentation 객체
+    """
+
+    output = {}
+
+    try:
+        presentation = prs_obj
+
+        if not presentation:
+            return {"status": "No active presentation found."}
+
+        slides = presentation.Slides
+        slide_count = slides.Count
+
+        output["Presentation_Name"] = presentation.Name
+        output["Total_Slide_Number"] = slide_count
+        output["Current_Slide_Number"] = slide_num
+
+        output["Slide Width"]  = presentation.PageSetup.SlideWidth
+        output["Slide Height"] = presentation.PageSetup.SlideHeight
+        
+        if slide_num < 1 or slide_num > slide_count:
+            return {"status": f"Invalid slide number (1~{slide_count})"}
+
+        slide = slides(slide_num)
+
+        output["Slide_Properties"] = parse_slide_properties(slide)
+
+        shapes = slide.Shapes
+        shape_count = shapes.Count
+
+        output["Objects_Overview"] = f"Found {shape_count} objects"
+        output["Objects_Detail"] = []
+
+        for i in range(1, shape_count + 1):
+            shape = shapes(i)
+
+            # ---- COM 속성 캐싱 ----
+            sid = shape.Id
+            name = shape.Name
+            stype = shape.Type
+            left = shape.Left
+            top = shape.Top
+            width = shape.Width
+            height = shape.Height
+
+            shape_info = {
+                "Object_number": i,
+                "Shape_Id": sid,
+                "Name": name,
+                "Type": SHAPE_TYPE_MAP.get(stype, stype),
+                "Position_Left": left,
+                "Position_Top": top,
+                "Size_Width": width,
+                "Size_Height": height,
+                "More_detail": parse_shape_details_fast(shape, stype),
+            }
+
+            output["Objects_Detail"].append(shape_info)
+
+        output["Slide_Notes"] = parse_slide_notes(slide)
+
+    except pywintypes.com_error as e:
+        output["Error"] = f"COM error: {e}"
+
+    return output
+
 
 def extract_text_from_shape(shape, indent_level=1):
     """
@@ -837,8 +978,7 @@ def extract_text_from_shape(shape, indent_level=1):
         # 1) TextFrame 지원 객체
     if getattr(shape, "HasTextFrame", False) and shape.TextFrame.HasText:
         tr = shape.TextFrame.TextRange
-            
-        t = getattr(shape, "Type", None)
+
         tf = None
         if safe(shape, "HasTextFrame", False):
             tf = shape.TextFrame
@@ -848,25 +988,12 @@ def extract_text_from_shape(shape, indent_level=1):
         if tf is None or not safe(tf, "HasText", False):
             print("No text")
 
-        # debug 파싱 함수로부터 runs 정보 얻기
+        # 여기서 이미 FullText / Runs / Paragraphs(=bullet+Level 포함)를 모두 얻음
         parsed = parse_text_frame_debug(tf)
-        runs = parsed.get("Runs", [])
 
-        # result["TextFrame"] 에 run 별로 저장
-        result["TextFrame"] = []
-        for idx, run in enumerate(runs, start=1):
-            # 원하는 속성만 골라 담거나, run 전체를 그대로 담을 수도 있습니다.
-            run_info = {
-                "RunIndex": idx,
-                "Text": run.get("Text", ""),
-                "Font": run.get("Font")
-            }
-            result["TextFrame"].append(run_info)
+        # 그대로 넣되, Hyperlink만 살짝 추가
+        result["TextFrame"] = parsed
 
-
-
-
-        # Hyperlink 있으면 추가
         try:
             hl = tr.ActionSettings(1).Hyperlink
             addr = getattr(hl, "Address", None)
@@ -1042,6 +1169,49 @@ def parse_shape_details(shape, indent_level=1):
     except Exception as e:
         result["Shape Detail Error"] = str(e)
     
+    return result
+
+def parse_shape_details_fast(shape, stype):
+    result = {}
+
+    # ---- 텍스트가 있을 때만 파싱 (4번) ----
+    if shape.HasTextFrame:
+        tf = shape.TextFrame
+        if tf.HasText:
+            result["Text"] = extract_text_from_shape(shape)
+
+    try:
+        # Group
+        if stype == 6:
+            result["Group"] = {
+                "Items": parse_group_shapes(shape)
+            }
+
+        # Picture
+        elif stype == 13:
+            result["Picture"] = {
+                "AlternativeText": shape.AlternativeText
+            }
+
+        # Chart
+        elif stype == 3:
+            chart = shape.Chart
+            result["Chart"] = {
+                "ChartType": chart.ChartType,
+                "HasTitle": chart.HasTitle
+            }
+
+        # Table
+        elif stype == 19:
+            table = shape.Table
+            result["Table"] = {
+                "Rows": table.Rows.Count,
+                "Columns": table.Columns.Count
+            }
+
+    except Exception as e:
+        result["Shape Detail Error"] = str(e)
+
     return result
 
 
