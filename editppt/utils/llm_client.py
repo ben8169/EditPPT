@@ -95,6 +95,7 @@ def call_llm(
     payload = {
         "model": model,
         "input": messages, 
+        "temperature": 0.2
     }
 
     if tools is not None:

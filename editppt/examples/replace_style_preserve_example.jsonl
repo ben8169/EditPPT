@@ -1,0 +1,27 @@
+
+
+{"Text": "Scalar", "Font": {"Name": "Calibri", "Size": 24.0, "Bold": true, "Color": {"R": 0, "G": 0, "B": 0}}}
+{"Text": ":", "Font": {"Name": "Calibri", "Size": 24.0, "Color": {"R": 0, "G": 0, "B": 0}}}
+{"Text": " "}
+{"Text": "magnitude only\r", "Font": {"Name": "Calibri", "Size": 24.0, "Color": {"R": 0, "G": 0, "B": 0}}}
+{"Text": "Vector", "Font": {"Name": "Calibri", "Size": 24.0, "Bold": true, "Color": {"R": 0, "G": 0, "B": 0}}}
+{"Text": ": magnitude + direction (boldface, lowercase)\r", "Font": {"Name": "Calibri", "Size": 24.0, "Color": {"R": 0, "G": 0, "B": 0}}}
+{"Text": "Matrix", "Font": {"Name": "Calibri", "Size": 24.0, "Bold": true, "Color": {"R": 0, "G": 0, "B": 0}}}
+{"Text": ": 2D array of numbers (uppercase)", "Font": {"Name": "Calibri", "Size": 24.0, "Color": {"R": 0, "G": 0, "B": 0}}}
+
+{"Text": "스칼라", "Font": {"Name": "Calibri", "Size": 24.0, "Bold": true, "Color": {"R": 0, "G": 0, "B": 0}}}
+{"Text": ":", "Font": {"Name": "Calibri", "Size": 24.0, "Color": {"R": 0, "G": 0, "B": 0}}}
+{"Text": " ", "Font": {"Name": "Calibri", "Size": 24.0, "Color": {"R": 0, "G": 0, "B": 0}}}
+{"Text": "크기만 있음\r", "Font": {"Name": "Calibri", "Size": 24.0, "Color": {"R": 0, "G": 0, "B": 0}}}
+{"Text": "벡터", "Font": {"Name": "Calibri", "Size": 24.0, "Bold": true, "Color": {"R": 0, "G": 0, "B": 0}}}
+{"Text": ":", "Font": {"Name": "Calibri", "Size": 24.0, "Color": {"R": 0, "G": 0, "B": 0}}}
+{"Text": " ", "Font": {"Name": "Calibri", "Size": 24.0, "Color": {"R": 0, "G": 0, "B": 0}}}
+{"Text": "크기 + 방향 (굵은 글씨, 소문자)\r", "Font": {"Name": "Calibri", "Size": 24.0, "Color": {"R": 0, "G": 0, "B": 0}}}
+{"Text": "행렬", "Font": {"Name": "Calibri", "Size": 24.0, "Bold": true, "Color": {"R": 0, "G": 0, "B": 0}}}
+{"Text": ":", "Font": {"Name": "Calibri", "Size": 24.0, "Color": {"R": 0, "G": 0, "B": 0}}}
+{"Text": " ", "Font": {"Name": "Calibri", "Size": 24.0, "Color": {"R": 0, "G": 0, "B": 0}}}
+{"Text": "숫자의 2차원 배열 (대문자)", "Font": {"Name": "Calibri", "Size": 24.0, "Color": {"R": 0, "G": 0, "B": 0}}}
+
+
+
+

@@ -1,0 +1,14 @@
+{
+    "HasCriticalIssues": "Yes",
+    "Issues": [
+        {
+            "IssueType": "ELEMENT_COLLISION",
+            "AffectedShapeIDs": [
+                "3",
+                "5124"
+            ],
+            "TechnicalDiagnosis": "Center-aligning the main text (Shape 3) shifted the paragraph toward the middle/right, causing it to overlap with the adjacent formula image (Shape 5124) in the same horizontal band. The overlap is clearly visible where the end of the sentence is covered by the image.",
+            "ActionableFix": "Keep the paragraph centered but avoid the image: move Picture 4 slightly to the right or upward, or reduce/reposition the width of the main text placeholder so its centered line does not intersect the image. Ensure at least ~12–16 px spacing between them."
+        }
+    ]
+}

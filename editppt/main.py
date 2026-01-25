@@ -17,6 +17,7 @@ import sys
 # PPT_PATH = "../sample_ppt/kairi.pptx"  
 # PPT_PATH = "../sample_ppt/news_card.pptx"  
 PPT_PATH = "../sample_ppt/math_simple.pptx"  
+# CURRENT_MODEL_NAME = "gpt-5-nano"
 CURRENT_MODEL_NAME = "gpt-4.1"
 CURRENT_VISION_MODEL_NAME = "gemini-2.5-pro"
 
@@ -26,8 +27,6 @@ class PPTContainer:
 
 def kill_powerpoint_processes():
     try:
-        # /F: 강제 종료, /IM: 이미지 이름 지정, /T: 자식 프로세스까지 종료
-        # > nul 2>&1 은 실행 결과 메시지를 콘솔에 출력하지 않게 합니다 (Windows 전용)
         subprocess.run(["taskkill", "/F", "/IM", "powerpnt.exe", "/T"], 
                        stdout=subprocess.DEVNULL, 
                        stderr=subprocess.DEVNULL)
@@ -75,7 +74,7 @@ def main():
         logger.error(f"Failed to initialize PowerPoint: {e}")
         return
 
-    planner = Planner(model=CURRENT_MODEL_NAME)
+    planner = Planner(model=CURRENT_MODEL_NAME, slide_name=container.prs.Name, total_slide_numbers=len(container.prs.Slides))
     logger.info(f"Planner 완료 ...")
     
     parser = Parser(container=container, total_slides=len(container.prs.Slides)) 

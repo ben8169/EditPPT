@@ -26,22 +26,21 @@ class Parser:
         self.container = container  
         self.total_slides = total_slides
 
-
-        for page_num in range(1, min(2, total_slides + 1)):
-            self.database[page_num] = parse_active_slide_objects(page_num, self.container.prs)
-            print(f"Parsed slide {page_num}/{total_slides}")
+        # for page_num in range(1, min(10, total_slides + 1)):
+        #     self.database[page_num] = parse_active_slide_objects(page_num, self.container.prs)
+        #     print(f"Parsed slide {page_num}/{total_slides}")
 
 
     def process(self, page_number: int):
-        if page_number < 1 or page_number > self.total_slides:
-            raise ValueError("Invalid page number")
+        # if page_number < 1 or page_number > self.total_slides:
+        #     raise ValueError("Invalid page number")
         
-        if page_number not in self.database:
-            print(f'Does not have page_number {page_number}, newly parsing')
-            print('='*40)
-            self.database[page_number] = parse_active_slide_objects(page_number, self.container.prs)
-            with open(f"logfiles/{TIMESTAMP}/parser_Database.json", "w", encoding="utf-8") as f:
-                json.dump(self.database, f, ensure_ascii=False, indent=4)
+        # if page_number not in self.database:
+        print(f'Parsing Page {page_number}...')
+        print('='*40)
+        self.database[page_number] = parse_active_slide_objects(page_number, self.container.prs)
+        with open(f"logfiles/{TIMESTAMP}/parser_Database.json", "w", encoding="utf-8") as f:
+            json.dump(self.database, f, ensure_ascii=False, indent=4)
 
         return self.database[page_number]
 
@@ -89,7 +88,7 @@ class Parser:
                     "content": create_text_validator_agent_system_prompt(
                         page_number, description, action, detailed_contents)},
                     {"role": "user",
-                    "content": create_text_validator_agent_user_prompt(new_parse, old_parse,used_tools)}
+                    "content": create_text_validator_agent_user_prompt(new_parse, old_parse, used_tools)}
                 ]
                 response = call_llm(model=model, messages=messages)
                 response_text = (response.output_text or "").strip()

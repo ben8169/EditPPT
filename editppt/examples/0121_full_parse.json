@@ -1,0 +1,2614 @@
+{
+    "1": {
+        "Presentation_Name": "math_simple.pptx",
+        "Total_Slide_Number": 10,
+        "Current_Slide_Number": 1,
+        "Slide Width": 960.0,
+        "Slide Height": 540.0,
+        "Slide_Properties": {
+            "Slide Layout Code": 1,
+            "CustomLayout Name": "제목 슬라이드",
+            "CustomLayout Index": 1,
+            "Background Fill Type": "Solid",
+            "Transition Effect": 0,
+            "Advance Time (s)": 0.0,
+            "Advance On Click": true,
+            "Advance On Time": false
+        },
+        "Objects_Overview": "Found 2 objects",
+        "Objects_Detail": [
+            {
+                "Object_number": 1,
+                "Shape_Id": 2,
+                "Name": "제목 1",
+                "Type": "Placeholder",
+                "Position_Left": 120.0,
+                "Position_Top": 88.37503814697266,
+                "Size_Width": 720.0,
+                "Size_Height": 188.0,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "\u000bLinear Algerbra Basics",
+                            "Runs": [
+                                {
+                                    "Text": "\u000bLinear Algerbra Basics",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 60.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 2,
+                "Shape_Id": 3,
+                "Name": "부제목 2",
+                "Type": "Placeholder",
+                "Position_Left": 120.0,
+                "Position_Top": 283.6250305175781,
+                "Size_Width": 720.0,
+                "Size_Height": 130.3749542236328,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "Date: 2026-01-05\rPresenter: Jongbum Won",
+                            "Runs": [
+                                {
+                                    "Text": "Date: 2026-01-05\rPresenter: Jongbum Won",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            }
+        ],
+        "Slide_Notes": {
+            "Has Notes Page": false,
+            "Notes Content": null
+        }
+    },
+    "2": {
+        "Presentation_Name": "math_simple.pptx",
+        "Total_Slide_Number": 10,
+        "Current_Slide_Number": 2,
+        "Slide Width": 960.0,
+        "Slide Height": 540.0,
+        "Slide_Properties": {
+            "Slide Layout Code": 16,
+            "CustomLayout Name": "제목 및 내용",
+            "CustomLayout Index": 2,
+            "Background Fill Type": "Solid",
+            "Transition Effect": 0,
+            "Advance Time (s)": 0.0,
+            "Advance On Click": true,
+            "Advance On Time": false
+        },
+        "Objects_Overview": "Found 3 objects",
+        "Objects_Detail": [
+            {
+                "Object_number": 1,
+                "Shape_Id": 2,
+                "Name": "제목 1",
+                "Type": "Placeholder",
+                "Position_Left": 26.999921798706055,
+                "Position_Top": 21.26921272277832,
+                "Size_Width": 892.3846435546875,
+                "Size_Height": 42.42314910888672,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "Vector and Matrix Notations",
+                            "Runs": [
+                                {
+                                    "Text": "Vector and Matrix Notations",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 32.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 78,
+                                            "G": 149,
+                                            "B": 217
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 2,
+                "Shape_Id": 3,
+                "Name": "내용 개체 틀 2",
+                "Type": "Placeholder",
+                "Position_Left": 26.999921798706055,
+                "Position_Top": 76.15386199951172,
+                "Size_Width": 892.3846435546875,
+                "Size_Height": 119.80487823486328,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "Scalar: magnitude only\rVector: magnitude + direction (boldface, lowercase)\rMatrix: 2D array of numbers (uppercase)\r\r",
+                            "Runs": [
+                                {
+                                    "Text": "Scalar",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": ":",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": " ",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": "magnitude only\r",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": "Vector",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": ": magnitude + direction (boldface, lowercase)\r",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": "Matrix",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": ": 2D array of numbers (uppercase)",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": "\r",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": "\r",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 3,
+                "Shape_Id": 4,
+                "Name": "슬라이드 번호 개체 틀 3",
+                "Type": "Placeholder",
+                "Position_Left": 703.3845825195312,
+                "Position_Top": 508.84613037109375,
+                "Size_Width": 216.0,
+                "Size_Height": 20.403858184814453,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "2",
+                            "Runs": [
+                                {
+                                    "Text": "2",
+                                    "Font": {
+                                        "Name": "맑은 고딕",
+                                        "Size": 12.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 118,
+                                            "G": 118,
+                                            "B": 118
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            }
+        ],
+        "Slide_Notes": {
+            "Has Notes Page": false,
+            "Notes Content": null
+        }
+    },
+    "3": {
+        "Presentation_Name": "math_simple.pptx",
+        "Total_Slide_Number": 10,
+        "Current_Slide_Number": 3,
+        "Slide Width": 960.0,
+        "Slide Height": 540.0,
+        "Slide_Properties": {
+            "Slide Layout Code": 16,
+            "CustomLayout Name": "제목 및 내용",
+            "CustomLayout Index": 2,
+            "Background Fill Type": "Solid",
+            "Transition Effect": 0,
+            "Advance Time (s)": 0.0,
+            "Advance On Click": true,
+            "Advance On Time": false
+        },
+        "Objects_Overview": "Found 9 objects",
+        "Objects_Detail": [
+            {
+                "Object_number": 1,
+                "Shape_Id": 2,
+                "Name": "제목 1",
+                "Type": "Placeholder",
+                "Position_Left": 26.999921798706055,
+                "Position_Top": 21.26921272277832,
+                "Size_Width": 892.3846435546875,
+                "Size_Height": 42.42314910888672,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "Vector and Matrix Notations",
+                            "Runs": [
+                                {
+                                    "Text": "Vector and Matrix Notations",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 32.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 78,
+                                            "G": 149,
+                                            "B": 217
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 2,
+                "Shape_Id": 3,
+                "Name": "내용 개체 틀 2",
+                "Type": "Placeholder",
+                "Position_Left": 26.999921798706055,
+                "Position_Top": 76.15386199951172,
+                "Size_Width": 892.3846435546875,
+                "Size_Height": 119.80487823486328,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "Scalar: magnitude only\rVector: magnitude + direction (boldface, lowercase)\rMatrix: 2D array of numbers (uppercase)\r\r",
+                            "Runs": [
+                                {
+                                    "Text": "Scalar",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": ":",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": " ",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": "magnitude only\r",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": "Vector",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": ": magnitude + direction (boldface, lowercase)\r",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": "Matrix",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": ": 2D array of numbers (uppercase)",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": "\r",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": "\r",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 3,
+                "Shape_Id": 4,
+                "Name": "슬라이드 번호 개체 틀 3",
+                "Type": "Placeholder",
+                "Position_Left": 703.3845825195312,
+                "Position_Top": 508.84613037109375,
+                "Size_Width": 216.0,
+                "Size_Height": 20.403858184814453,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "3",
+                            "Runs": [
+                                {
+                                    "Text": "3",
+                                    "Font": {
+                                        "Name": "맑은 고딕",
+                                        "Size": 12.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 118,
+                                            "G": 118,
+                                            "B": 118
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 4,
+                "Shape_Id": 1038,
+                "Name": "Picture 14",
+                "Type": "Picture",
+                "Position_Left": 122.45487976074219,
+                "Position_Top": 285.4949645996094,
+                "Size_Width": 19.5,
+                "Size_Height": 21.75,
+                "More_detail": {
+                    "Picture": {
+                        "AlternativeText": ""
+                    }
+                }
+            },
+            {
+                "Object_number": 5,
+                "Shape_Id": 1042,
+                "Name": "Picture 18",
+                "Type": "Picture",
+                "Position_Left": 268.359130859375,
+                "Position_Top": 234.75,
+                "Size_Width": 215.25,
+                "Size_Height": 133.5,
+                "More_detail": {
+                    "Picture": {
+                        "AlternativeText": ""
+                    }
+                }
+            },
+            {
+                "Object_number": 6,
+                "Shape_Id": 1044,
+                "Name": "Picture 20",
+                "Type": "Picture",
+                "Position_Left": 610.0133666992188,
+                "Position_Top": 244.77125549316406,
+                "Size_Width": 273.0,
+                "Size_Height": 114.0,
+                "More_detail": {
+                    "Picture": {
+                        "AlternativeText": ""
+                    }
+                }
+            },
+            {
+                "Object_number": 7,
+                "Shape_Id": 7,
+                "Name": "TextBox 6",
+                "Type": "Text Box",
+                "Position_Left": 70.96772003173828,
+                "Position_Top": 428.59613037109375,
+                "Size_Width": 122.47425079345703,
+                "Size_Height": 29.081260681152344,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "scalar",
+                            "Runs": [
+                                {
+                                    "Text": "scalar",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 18.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 8,
+                "Shape_Id": 8,
+                "Name": "TextBox 7",
+                "Type": "Text Box",
+                "Position_Left": 314.7469177246094,
+                "Position_Top": 428.5543212890625,
+                "Size_Width": 122.47425079345703,
+                "Size_Height": 29.081260681152344,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "vector",
+                            "Runs": [
+                                {
+                                    "Text": "vector",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 18.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 9,
+                "Shape_Id": 9,
+                "Name": "TextBox 8",
+                "Type": "Text Box",
+                "Position_Left": 685.2762451171875,
+                "Position_Top": 428.5543212890625,
+                "Size_Width": 122.47425079345703,
+                "Size_Height": 29.081260681152344,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "matrix",
+                            "Runs": [
+                                {
+                                    "Text": "matrix",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 18.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            }
+        ],
+        "Slide_Notes": {
+            "Has Notes Page": false,
+            "Notes Content": null
+        }
+    },
+    "4": {
+        "Presentation_Name": "math_simple.pptx",
+        "Total_Slide_Number": 10,
+        "Current_Slide_Number": 4,
+        "Slide Width": 960.0,
+        "Slide Height": 540.0,
+        "Slide_Properties": {
+            "Slide Layout Code": 16,
+            "CustomLayout Name": "제목 및 내용",
+            "CustomLayout Index": 2,
+            "Background Fill Type": "Solid",
+            "Transition Effect": 0,
+            "Advance Time (s)": 0.0,
+            "Advance On Click": true,
+            "Advance On Time": false
+        },
+        "Objects_Overview": "Found 7 objects",
+        "Objects_Detail": [
+            {
+                "Object_number": 1,
+                "Shape_Id": 2,
+                "Name": "제목 1",
+                "Type": "Placeholder",
+                "Position_Left": 26.999921798706055,
+                "Position_Top": 21.26921272277832,
+                "Size_Width": 892.3846435546875,
+                "Size_Height": 42.42314910888672,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "Vector and Matrix Notations",
+                            "Runs": [
+                                {
+                                    "Text": "Vector and Matrix Notations",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 32.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 78,
+                                            "G": 149,
+                                            "B": 217
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 2,
+                "Shape_Id": 3,
+                "Name": "내용 개체 틀 2",
+                "Type": "Placeholder",
+                "Position_Left": 26.999921798706055,
+                "Position_Top": 76.15386199951172,
+                "Size_Width": 892.3846435546875,
+                "Size_Height": 119.80487823486328,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "- An n-dimensional vector typically refers to a column vector (i.e., an n × 1 matrix)",
+                            "Runs": [
+                                {
+                                    "Text": "- An n-dimensional vector typically refers to a ",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": "column vector ",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": "(i.e., an n × 1 matrix)",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 3,
+                "Shape_Id": 4,
+                "Name": "슬라이드 번호 개체 틀 3",
+                "Type": "Placeholder",
+                "Position_Left": 703.3845825195312,
+                "Position_Top": 508.84613037109375,
+                "Size_Width": 216.0,
+                "Size_Height": 20.403858184814453,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "4",
+                            "Runs": [
+                                {
+                                    "Text": "4",
+                                    "Font": {
+                                        "Name": "맑은 고딕",
+                                        "Size": 12.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 118,
+                                            "G": 118,
+                                            "B": 118
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 4,
+                "Shape_Id": 8,
+                "Name": "TextBox 7",
+                "Type": "Text Box",
+                "Position_Left": 86.65204620361328,
+                "Position_Top": 386.5470886230469,
+                "Size_Width": 181.11331176757812,
+                "Size_Height": 29.081260681152344,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "(column) vector",
+                            "Runs": [
+                                {
+                                    "Text": "(column) vector",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 18.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 5,
+                "Shape_Id": 2052,
+                "Name": "Picture 4",
+                "Type": "Picture",
+                "Position_Left": 382.291259765625,
+                "Position_Top": 199.8749542236328,
+                "Size_Width": 523.5,
+                "Size_Height": 140.25,
+                "More_detail": {
+                    "Picture": {
+                        "AlternativeText": ""
+                    }
+                }
+            },
+            {
+                "Object_number": 6,
+                "Shape_Id": 2054,
+                "Name": "Picture 6",
+                "Type": "Picture",
+                "Position_Left": 54.208740234375,
+                "Position_Top": 203.2499237060547,
+                "Size_Width": 246.0,
+                "Size_Height": 133.5,
+                "More_detail": {
+                    "Picture": {
+                        "AlternativeText": ""
+                    }
+                }
+            },
+            {
+                "Object_number": 7,
+                "Shape_Id": 5,
+                "Name": "TextBox 4",
+                "Type": "Text Box",
+                "Position_Left": 553.4845581054688,
+                "Position_Top": 380.8636169433594,
+                "Size_Width": 181.11331176757812,
+                "Size_Height": 29.081260681152344,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "row vector",
+                            "Runs": [
+                                {
+                                    "Text": "row vector",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 18.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            }
+        ],
+        "Slide_Notes": {
+            "Has Notes Page": false,
+            "Notes Content": null
+        }
+    },
+    "5": {
+        "Presentation_Name": "math_simple.pptx",
+        "Total_Slide_Number": 10,
+        "Current_Slide_Number": 5,
+        "Slide Width": 960.0,
+        "Slide Height": 540.0,
+        "Slide_Properties": {
+            "Slide Layout Code": 16,
+            "CustomLayout Name": "제목 및 내용",
+            "CustomLayout Index": 2,
+            "Background Fill Type": "Solid",
+            "Transition Effect": 0,
+            "Advance Time (s)": 0.0,
+            "Advance On Click": true,
+            "Advance On Time": false
+        },
+        "Objects_Overview": "Found 8 objects",
+        "Objects_Detail": [
+            {
+                "Object_number": 1,
+                "Shape_Id": 2,
+                "Name": "제목 1",
+                "Type": "Placeholder",
+                "Position_Left": 26.999921798706055,
+                "Position_Top": 21.26921272277832,
+                "Size_Width": 892.3846435546875,
+                "Size_Height": 42.42314910888672,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "Linear equation and system",
+                            "Runs": [
+                                {
+                                    "Text": "Linear equation and system",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 32.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 78,
+                                            "G": 149,
+                                            "B": 217
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 2,
+                "Shape_Id": 3,
+                "Name": "내용 개체 틀 2",
+                "Type": "Placeholder",
+                "Position_Left": 26.999921798706055,
+                "Position_Top": 76.15393829345703,
+                "Size_Width": 892.3846435546875,
+                "Size_Height": 34.444095611572266,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "- Linear equation: an equation that may be put in the form\r",
+                            "Runs": [
+                                {
+                                    "Text": "- ",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": "Linear equation",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": ": an equation that may be put in the form\r",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 3,
+                "Shape_Id": 4,
+                "Name": "슬라이드 번호 개체 틀 3",
+                "Type": "Placeholder",
+                "Position_Left": 703.3845825195312,
+                "Position_Top": 508.84613037109375,
+                "Size_Width": 216.0,
+                "Size_Height": 20.403858184814453,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "5",
+                            "Runs": [
+                                {
+                                    "Text": "5",
+                                    "Font": {
+                                        "Name": "맑은 고딕",
+                                        "Size": 12.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 118,
+                                            "G": 118,
+                                            "B": 118
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 4,
+                "Shape_Id": 3074,
+                "Name": "Picture 2",
+                "Type": "Picture",
+                "Position_Left": 279.75,
+                "Position_Top": 122.61827087402344,
+                "Size_Width": 400.5,
+                "Size_Height": 27.0,
+                "More_detail": {
+                    "Picture": {
+                        "AlternativeText": ""
+                    }
+                }
+            },
+            {
+                "Object_number": 5,
+                "Shape_Id": 3076,
+                "Name": "Picture 4",
+                "Type": "Picture",
+                "Position_Left": 37.875038146972656,
+                "Position_Top": 182.25,
+                "Size_Width": 138.75,
+                "Size_Height": 19.5,
+                "More_detail": {
+                    "Picture": {
+                        "AlternativeText": ""
+                    }
+                }
+            },
+            {
+                "Object_number": 6,
+                "Shape_Id": 3078,
+                "Name": "Picture 6",
+                "Type": "Picture",
+                "Position_Left": 37.875038146972656,
+                "Position_Top": 221.19142150878906,
+                "Size_Width": 166.5,
+                "Size_Height": 27.75,
+                "More_detail": {
+                    "Picture": {
+                        "AlternativeText": ""
+                    }
+                }
+            },
+            {
+                "Object_number": 7,
+                "Shape_Id": 10,
+                "Name": "내용 개체 틀 2",
+                "Type": "Text Box",
+                "Position_Left": 183.75,
+                "Position_Top": 174.7779541015625,
+                "Size_Width": 688.3845825195312,
+                "Size_Height": 34.444095611572266,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "are variables",
+                            "Runs": [
+                                {
+                                    "Text": "are variables",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 8,
+                "Shape_Id": 11,
+                "Name": "내용 개체 틀 2",
+                "Type": "Text Box",
+                "Position_Left": 214.5,
+                "Position_Top": 217.84432983398438,
+                "Size_Width": 688.3845825195312,
+                "Size_Height": 34.444095611572266,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "are coefficients",
+                            "Runs": [
+                                {
+                                    "Text": "are coefficients",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            }
+        ],
+        "Slide_Notes": {
+            "Has Notes Page": false,
+            "Notes Content": null
+        }
+    },
+    "6": {
+        "Presentation_Name": "math_simple.pptx",
+        "Total_Slide_Number": 10,
+        "Current_Slide_Number": 6,
+        "Slide Width": 960.0,
+        "Slide Height": 540.0,
+        "Slide_Properties": {
+            "Slide Layout Code": 16,
+            "CustomLayout Name": "제목 및 내용",
+            "CustomLayout Index": 2,
+            "Background Fill Type": "Solid",
+            "Transition Effect": 0,
+            "Advance Time (s)": 0.0,
+            "Advance On Click": true,
+            "Advance On Time": false
+        },
+        "Objects_Overview": "Found 10 objects",
+        "Objects_Detail": [
+            {
+                "Object_number": 1,
+                "Shape_Id": 2,
+                "Name": "제목 1",
+                "Type": "Placeholder",
+                "Position_Left": 26.999921798706055,
+                "Position_Top": 21.26921272277832,
+                "Size_Width": 892.3846435546875,
+                "Size_Height": 42.42314910888672,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "Linear equation and system",
+                            "Runs": [
+                                {
+                                    "Text": "Linear equation and system",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 32.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 78,
+                                            "G": 149,
+                                            "B": 217
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 2,
+                "Shape_Id": 3,
+                "Name": "내용 개체 틀 2",
+                "Type": "Placeholder",
+                "Position_Left": 26.999921798706055,
+                "Position_Top": 76.15393829345703,
+                "Size_Width": 892.3846435546875,
+                "Size_Height": 34.444095611572266,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "- Linear equation: an equation that may be put in the form\r",
+                            "Runs": [
+                                {
+                                    "Text": "- ",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": "Linear equation",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": ": an equation that may be put in the form\r",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 3,
+                "Shape_Id": 4,
+                "Name": "슬라이드 번호 개체 틀 3",
+                "Type": "Placeholder",
+                "Position_Left": 703.3845825195312,
+                "Position_Top": 508.84613037109375,
+                "Size_Width": 216.0,
+                "Size_Height": 20.403858184814453,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "6",
+                            "Runs": [
+                                {
+                                    "Text": "6",
+                                    "Font": {
+                                        "Name": "맑은 고딕",
+                                        "Size": 12.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 118,
+                                            "G": 118,
+                                            "B": 118
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 4,
+                "Shape_Id": 3074,
+                "Name": "Picture 2",
+                "Type": "Picture",
+                "Position_Left": 279.75,
+                "Position_Top": 122.61827087402344,
+                "Size_Width": 400.5,
+                "Size_Height": 27.0,
+                "More_detail": {
+                    "Picture": {
+                        "AlternativeText": ""
+                    }
+                }
+            },
+            {
+                "Object_number": 5,
+                "Shape_Id": 3076,
+                "Name": "Picture 4",
+                "Type": "Picture",
+                "Position_Left": 37.875038146972656,
+                "Position_Top": 182.25,
+                "Size_Width": 138.75,
+                "Size_Height": 19.5,
+                "More_detail": {
+                    "Picture": {
+                        "AlternativeText": ""
+                    }
+                }
+            },
+            {
+                "Object_number": 6,
+                "Shape_Id": 3078,
+                "Name": "Picture 6",
+                "Type": "Picture",
+                "Position_Left": 37.875038146972656,
+                "Position_Top": 221.19142150878906,
+                "Size_Width": 166.5,
+                "Size_Height": 27.75,
+                "More_detail": {
+                    "Picture": {
+                        "AlternativeText": ""
+                    }
+                }
+            },
+            {
+                "Object_number": 7,
+                "Shape_Id": 10,
+                "Name": "내용 개체 틀 2",
+                "Type": "Text Box",
+                "Position_Left": 183.75,
+                "Position_Top": 174.7779541015625,
+                "Size_Width": 688.3845825195312,
+                "Size_Height": 34.444095611572266,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "are variables",
+                            "Runs": [
+                                {
+                                    "Text": "are variables",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 8,
+                "Shape_Id": 11,
+                "Name": "내용 개체 틀 2",
+                "Type": "Text Box",
+                "Position_Left": 183.75,
+                "Position_Top": 217.84432983398438,
+                "Size_Width": 688.3845825195312,
+                "Size_Height": 34.444095611572266,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "are coefficients",
+                            "Runs": [
+                                {
+                                    "Text": "are coefficients",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 9,
+                "Shape_Id": 5,
+                "Name": "그룹 4",
+                "Type": "Group",
+                "Position_Left": 527.9422607421875,
+                "Position_Top": 305.9096984863281,
+                "Size_Width": 242.6249542236328,
+                "Size_Height": 107.25,
+                "More_detail": {
+                    "Group": {
+                        "Items": [
+                            {
+                                "Shape_Id": 3080,
+                                "Name": "Picture 8",
+                                "Type": "Picture",
+                                "Position_Left": 527.9422607421875,
+                                "Position_Top": 305.9096984863281,
+                                "Size_Width": 101.25,
+                                "Size_Height": 107.25,
+                                "Picture": {
+                                    "AlternativeText": ""
+                                }
+                            },
+                            {
+                                "Shape_Id": 3082,
+                                "Name": "Picture 10",
+                                "Type": "Picture",
+                                "Position_Left": 667.0672607421875,
+                                "Position_Top": 305.9096984863281,
+                                "Size_Width": 103.5,
+                                "Size_Height": 107.25,
+                                "Picture": {
+                                    "AlternativeText": ""
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "Object_number": 10,
+                "Shape_Id": 4098,
+                "Name": "Picture 2",
+                "Type": "Picture",
+                "Position_Left": 214.5,
+                "Position_Top": 347.9096984863281,
+                "Size_Width": 175.5,
+                "Size_Height": 23.25,
+                "More_detail": {
+                    "Picture": {
+                        "AlternativeText": ""
+                    }
+                }
+            }
+        ],
+        "Slide_Notes": {
+            "Has Notes Page": false,
+            "Notes Content": null
+        }
+    },
+    "7": {
+        "Presentation_Name": "math_simple.pptx",
+        "Total_Slide_Number": 10,
+        "Current_Slide_Number": 7,
+        "Slide Width": 960.0,
+        "Slide Height": 540.0,
+        "Slide_Properties": {
+            "Slide Layout Code": 16,
+            "CustomLayout Name": "제목 및 내용",
+            "CustomLayout Index": 2,
+            "Background Fill Type": "Solid",
+            "Transition Effect": 0,
+            "Advance Time (s)": 0.0,
+            "Advance On Click": true,
+            "Advance On Time": false
+        },
+        "Objects_Overview": "Found 7 objects",
+        "Objects_Detail": [
+            {
+                "Object_number": 1,
+                "Shape_Id": 2,
+                "Name": "제목 1",
+                "Type": "Placeholder",
+                "Position_Left": 26.999921798706055,
+                "Position_Top": 21.26921272277832,
+                "Size_Width": 892.3846435546875,
+                "Size_Height": 42.42314910888672,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "Linear equation and system",
+                            "Runs": [
+                                {
+                                    "Text": "Linear equation and system",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 32.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 78,
+                                            "G": 149,
+                                            "B": 217
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 2,
+                "Shape_Id": 3,
+                "Name": "내용 개체 틀 2",
+                "Type": "Placeholder",
+                "Position_Left": 26.999921798706055,
+                "Position_Top": 76.15393829345703,
+                "Size_Width": 892.3846435546875,
+                "Size_Height": 34.444095611572266,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "- Linear system: a set of linear equation involving the same variables\r",
+                            "Runs": [
+                                {
+                                    "Text": "- ",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": "Linear system",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": ": a set of linear equation involving the same variables\r",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 3,
+                "Shape_Id": 4,
+                "Name": "슬라이드 번호 개체 틀 3",
+                "Type": "Placeholder",
+                "Position_Left": 703.3845825195312,
+                "Position_Top": 508.84613037109375,
+                "Size_Width": 216.0,
+                "Size_Height": 20.403858184814453,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "7",
+                            "Runs": [
+                                {
+                                    "Text": "7",
+                                    "Font": {
+                                        "Name": "맑은 고딕",
+                                        "Size": 12.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 118,
+                                            "G": 118,
+                                            "B": 118
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 4,
+                "Shape_Id": 5124,
+                "Name": "Picture 4",
+                "Type": "Picture",
+                "Position_Left": 710.0798950195312,
+                "Position_Top": 85.12598419189453,
+                "Size_Width": 148.5,
+                "Size_Height": 16.5,
+                "More_detail": {
+                    "Picture": {
+                        "AlternativeText": ""
+                    }
+                }
+            },
+            {
+                "Object_number": 5,
+                "Shape_Id": 5,
+                "Name": "그룹 4",
+                "Type": "Group",
+                "Position_Left": 140.2377166748047,
+                "Position_Top": 165.94528198242188,
+                "Size_Width": 671.1739501953125,
+                "Size_Height": 106.5,
+                "More_detail": {
+                    "Group": {
+                        "Items": [
+                            {
+                                "Shape_Id": 5128,
+                                "Name": "Picture 8",
+                                "Type": "Picture",
+                                "Position_Left": 140.2377166748047,
+                                "Position_Top": 165.94528198242188,
+                                "Size_Width": 285.75,
+                                "Size_Height": 106.5,
+                                "Picture": {
+                                    "AlternativeText": ""
+                                }
+                            },
+                            {
+                                "Shape_Id": 7172,
+                                "Name": "Picture 4",
+                                "Type": "Picture",
+                                "Position_Left": 511.1752624511719,
+                                "Position_Top": 173.44528198242188,
+                                "Size_Width": 105.75,
+                                "Size_Height": 91.5,
+                                "Picture": {
+                                    "AlternativeText": ""
+                                }
+                            },
+                            {
+                                "Shape_Id": 7174,
+                                "Name": "Picture 6",
+                                "Type": "Picture",
+                                "Position_Left": 702.1128540039062,
+                                "Position_Top": 171.94528198242188,
+                                "Size_Width": 109.29882049560547,
+                                "Size_Height": 93.0,
+                                "Picture": {
+                                    "AlternativeText": ""
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "Object_number": 6,
+                "Shape_Id": 6,
+                "Name": "Rectangle 5",
+                "Type": "AutoShape",
+                "Position_Left": 270.30859375,
+                "Position_Top": 357.1199951171875,
+                "Size_Width": 338.6056823730469,
+                "Size_Height": 88.86858367919922,
+                "More_detail": {}
+            },
+            {
+                "Object_number": 7,
+                "Shape_Id": 7,
+                "Name": "TextBox 6",
+                "Type": "Text Box",
+                "Position_Left": 167.8628387451172,
+                "Position_Top": 361.5674743652344,
+                "Size_Width": 563.2457275390625,
+                "Size_Height": 79.97346496582031,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "TESTING TEXT OVERFLOW TESTING TEXT OVERFLOW TESTING TEXT OVERFLOWTESTING TEXT OVERFLOW TESTING TEXT OVERFLOW TESTING TEXT OVERFLOWTESTING TEXT OVERFLOW TESTING TEXT OVERFLOW TESTING TEXT OVERFLOWTESTING TEXT OVERFLOW TESTING TEXT OVERFLOW TESTING TEXT OVERFLOWTESTING TEXT OVERFLOW TESTING TEXT OVERFLOW TESTING TEXT OVERFLOWTESTING TEXT OVERFLOW TESTING TEXT OVERFLOW TESTING TEXT OVERFLOW",
+                            "Runs": [
+                                {
+                                    "Text": "TESTING TEXT OVERFLOW TESTING TEXT OVERFLOW TESTING TEXT OVERFLOWTESTING TEXT OVERFLOW TESTING TEXT OVERFLOW TESTING TEXT OVERFLOWTESTING TEXT OVERFLOW TESTING TEXT OVERFLOW TESTING TEXT OVERFLOWTESTING TEXT OVERFLOW TESTING TEXT OVERFLOW TESTING TEXT OVERFLOWTESTING TEXT OVERFLOW TESTING TEXT OVERFLOW TESTING TEXT OVERFLOWTESTING TEXT OVERFLOW TESTING TEXT OVERFLOW TESTING TEXT OVERFLOW",
+                                    "Font": {
+                                        "Name": "맑은 고딕",
+                                        "Size": 12.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            }
+        ],
+        "Slide_Notes": {
+            "Has Notes Page": true,
+            "Notes Shapes Count": 3,
+            "Notes Content": "내적의 관점으로 각 equation을 vector equation으로 볼 수 있다."
+        }
+    },
+    "8": {
+        "Presentation_Name": "math_simple.pptx",
+        "Total_Slide_Number": 10,
+        "Current_Slide_Number": 8,
+        "Slide Width": 960.0,
+        "Slide Height": 540.0,
+        "Slide_Properties": {
+            "Slide Layout Code": 16,
+            "CustomLayout Name": "제목 및 내용",
+            "CustomLayout Index": 2,
+            "Background Fill Type": "Solid",
+            "Transition Effect": 0,
+            "Advance Time (s)": 0.0,
+            "Advance On Click": true,
+            "Advance On Time": false
+        },
+        "Objects_Overview": "Found 7 objects",
+        "Objects_Detail": [
+            {
+                "Object_number": 1,
+                "Shape_Id": 2,
+                "Name": "제목 1",
+                "Type": "Placeholder",
+                "Position_Left": 26.999921798706055,
+                "Position_Top": 21.26921272277832,
+                "Size_Width": 892.3846435546875,
+                "Size_Height": 42.42314910888672,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "Linear equation and system",
+                            "Runs": [
+                                {
+                                    "Text": "Linear equation and system",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 32.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 78,
+                                            "G": 149,
+                                            "B": 217
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 2,
+                "Shape_Id": 3,
+                "Name": "내용 개체 틀 2",
+                "Type": "Placeholder",
+                "Position_Left": 119.2122802734375,
+                "Position_Top": 76.15393829345703,
+                "Size_Width": 680.8170776367188,
+                "Size_Height": 34.444095611572266,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "- Linear system: a set of linear equation involving the same variables\r",
+                            "Runs": [
+                                {
+                                    "Text": "- ",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": "Linear system",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": ": a set of linear equation involving the same variables\r",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 3,
+                "Shape_Id": 4,
+                "Name": "슬라이드 번호 개체 틀 3",
+                "Type": "Placeholder",
+                "Position_Left": 703.3845825195312,
+                "Position_Top": 508.84613037109375,
+                "Size_Width": 216.0,
+                "Size_Height": 20.403858184814453,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "8",
+                            "Runs": [
+                                {
+                                    "Text": "8",
+                                    "Font": {
+                                        "Name": "맑은 고딕",
+                                        "Size": 12.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 118,
+                                            "G": 118,
+                                            "B": 118
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 4,
+                "Shape_Id": 5124,
+                "Name": "Picture 4",
+                "Type": "Picture",
+                "Position_Left": 710.0798950195312,
+                "Position_Top": 85.12598419189453,
+                "Size_Width": 148.5,
+                "Size_Height": 16.5,
+                "More_detail": {
+                    "Picture": {
+                        "AlternativeText": ""
+                    }
+                }
+            },
+            {
+                "Object_number": 5,
+                "Shape_Id": 6,
+                "Name": "표 5",
+                "Type": "Table",
+                "Position_Left": 144.32992553710938,
+                "Position_Top": 134.5220489501953,
+                "Size_Width": 640.0,
+                "Size_Height": 116.80000305175781,
+                "More_detail": {
+                    "Table": {
+                        "Rows": 4,
+                        "Columns": 5
+                    }
+                }
+            },
+            {
+                "Object_number": 6,
+                "Shape_Id": 5128,
+                "Name": "Picture 8",
+                "Type": "Picture",
+                "Position_Left": 321.45489501953125,
+                "Position_Top": 298.97796630859375,
+                "Size_Width": 285.75,
+                "Size_Height": 106.5,
+                "More_detail": {
+                    "Picture": {
+                        "AlternativeText": ""
+                    }
+                }
+            },
+            {
+                "Object_number": 7,
+                "Shape_Id": 8,
+                "Name": "내용 개체 틀 2",
+                "Type": "Text Box",
+                "Position_Left": 33.80763626098633,
+                "Position_Top": 454.8740234375,
+                "Size_Width": 892.3846435546875,
+                "Size_Height": 34.444095611572266,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "We can predict the newcomer's lifespan if we can solve for x.",
+                            "Runs": [
+                                {
+                                    "Text": "We can predict the newcomer's lifespan if we can solve for x.",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            }
+        ],
+        "Slide_Notes": {
+            "Has Notes Page": false,
+            "Notes Content": null
+        }
+    },
+    "9": {
+        "Presentation_Name": "math_simple.pptx",
+        "Total_Slide_Number": 10,
+        "Current_Slide_Number": 9,
+        "Slide Width": 960.0,
+        "Slide Height": 540.0,
+        "Slide_Properties": {
+            "Slide Layout Code": 16,
+            "CustomLayout Name": "제목 및 내용",
+            "CustomLayout Index": 2,
+            "Background Fill Type": "Solid",
+            "Transition Effect": 0,
+            "Advance Time (s)": 0.0,
+            "Advance On Click": true,
+            "Advance On Time": false
+        },
+        "Objects_Overview": "Found 5 objects",
+        "Objects_Detail": [
+            {
+                "Object_number": 1,
+                "Shape_Id": 2,
+                "Name": "제목 1",
+                "Type": "Placeholder",
+                "Position_Left": 26.999921798706055,
+                "Position_Top": 21.26921272277832,
+                "Size_Width": 892.3846435546875,
+                "Size_Height": 42.42314910888672,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "Linear equation and system",
+                            "Runs": [
+                                {
+                                    "Text": "Linear equation and system",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 32.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 78,
+                                            "G": 149,
+                                            "B": 217
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 2,
+                "Shape_Id": 3,
+                "Name": "내용 개체 틀 2",
+                "Type": "Placeholder",
+                "Position_Left": 26.999921798706055,
+                "Position_Top": 76.15393829345703,
+                "Size_Width": 892.3846435546875,
+                "Size_Height": 34.444095611572266,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "- A linear system can be represented in matrix-vector equation as Ax = b",
+                            "Runs": [
+                                {
+                                    "Text": "- A linear system can be represented in ",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": "matrix-vector equation ",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": true,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Text": "as Ax = b",
+                                    "Font": {
+                                        "Name": "Calibri",
+                                        "Size": 24.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 0,
+                                            "G": 0,
+                                            "B": 0
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 3,
+                "Shape_Id": 4,
+                "Name": "슬라이드 번호 개체 틀 3",
+                "Type": "Placeholder",
+                "Position_Left": 703.3845825195312,
+                "Position_Top": 508.84613037109375,
+                "Size_Width": 216.0,
+                "Size_Height": 20.403858184814453,
+                "More_detail": {
+                    "Text": {
+                        "TextFrame": {
+                            "Has Text": true,
+                            "Text": "9",
+                            "Runs": [
+                                {
+                                    "Text": "9",
+                                    "Font": {
+                                        "Name": "맑은 고딕",
+                                        "Size": 12.0,
+                                        "Bold": false,
+                                        "Italic": false,
+                                        "Underline": false,
+                                        "Strikethrough": false,
+                                        "Subscript": false,
+                                        "Superscript": false,
+                                        "Color": {
+                                            "R": 118,
+                                            "G": 118,
+                                            "B": 118
+                                        }
+                                    }
+                                }
+                            ],
+                            "Paragraphs": []
+                        }
+                    }
+                }
+            },
+            {
+                "Object_number": 4,
+                "Shape_Id": 7170,
+                "Name": "Picture 2",
+                "Type": "Picture",
+                "Position_Left": 142.1249542236328,
+                "Position_Top": 327.7925109863281,
+                "Size_Width": 675.75,
+                "Size_Height": 92.25,
+                "More_detail": {
+                    "Picture": {
+                        "AlternativeText": ""
+                    }
+                }
+            },
+            {
+                "Object_number": 5,
+                "Shape_Id": 5,
+                "Name": "그룹 4",
+                "Type": "Group",
+                "Position_Left": 140.2377166748047,
+                "Position_Top": 165.94528198242188,
+                "Size_Width": 671.1739501953125,
+                "Size_Height": 106.5,
+                "More_detail": {
+                    "Group": {
+                        "Items": [
+                            {
+                                "Shape_Id": 6,
+                                "Name": "Picture 8",
+                                "Type": "Picture",
+                                "Position_Left": 140.2377166748047,
+                                "Position_Top": 165.94528198242188,
+                                "Size_Width": 285.75,
+                                "Size_Height": 106.5,
+                                "Picture": {
+                                    "AlternativeText": ""
+                                }
+                            },
+                            {
+                                "Shape_Id": 7,
+                                "Name": "Picture 4",
+                                "Type": "Picture",
+                                "Position_Left": 511.1752624511719,
+                                "Position_Top": 173.44528198242188,
+                                "Size_Width": 105.75,
+                                "Size_Height": 91.5,
+                                "Picture": {
+                                    "AlternativeText": ""
+                                }
+                            },
+                            {
+                                "Shape_Id": 8,
+                                "Name": "Picture 6",
+                                "Type": "Picture",
+                                "Position_Left": 702.1128540039062,
+                                "Position_Top": 171.94528198242188,
+                                "Size_Width": 109.29882049560547,
+                                "Size_Height": 93.0,
+                                "Picture": {
+                                    "AlternativeText": ""
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ],
+        "Slide_Notes": {
+            "Has Notes Page": true,
+            "Notes Shapes Count": 3,
+            "Notes Content": "그걸 합치면 A가 되고, Ax=b꼴로 표현이 가능하다."
+        }
+    }
+}

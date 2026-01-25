@@ -1,0 +1,333 @@
+[   
+    {
+    "type": "function",
+    "name": "set_text_style_preserve_runs",
+    "description": "Modify text style for a character range while preserving all other run-level font properties using pre-parsed run metadata.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+        "slide_number": {
+            "type": "integer",
+            "description": "1-based slide index"
+        },
+        "shape_id": {
+            "type": "integer",
+            "description": "PowerPoint Shape ID"
+        },
+        "char_start_index": {
+            "type": "integer",
+            "description": "0-based character start index"
+        },
+        "target_text": {
+            "type": "string",
+            "description": "Exact text to be styled (used for range validation)"
+        },
+        "char_end": {
+            "type": "integer",
+            "description": "Optional character end index (fallback validation only)"
+        },
+        "container": {
+            "type": "string",
+            "enum": ["shape", "table_cell"],
+            "default": "shape"
+        },
+        "row_index": {
+            "type": "integer",
+            "description": "1-based row index (required if container=table_cell)"
+        },
+        "col_index": {
+            "type": "integer",
+            "description": "1-based column index (required if container=table_cell)"
+        },
+        "font_name": {
+            "type": "string",
+            "description": "Font family name to apply"
+        },
+        "font_size": {
+            "type": "number",
+            "description": "Font size to apply"
+        },
+        "bold": {
+            "type": "boolean",
+            "description": "Whether to set bold (other runs remain unchanged)"
+        },
+        "italic": {
+            "type": "boolean",
+            "description": "Whether to set italic (other runs remain unchanged)"
+        },
+        "underline": {
+            "type": "boolean",
+            "description": "Whether to set underline (other runs remain unchanged)"
+        },
+        "color_hex": {
+            "type": "string",
+            "description": "HEX color string (e.g. #0000FF)"
+        }
+        },
+        "required": [
+        "slide_number",
+        "shape_id",
+        "char_start_index",
+        "target_text"
+        ]
+    }
+    },
+  {
+  "type": "function",
+  "name": "replace_shape_text",
+  "description": "Add, delete, or modify the text of a PowerPoint shape while preserving run-level font styles using LLM-based style mapping.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "slide_number": {
+        "type": "integer",
+        "description": "1-based slide index"
+      },
+      "shape_id": {
+        "type": "integer",
+        "description": "PowerPoint Shape ID"
+      },
+      "new_text": {
+        "type": "string",
+        "description": "The final text that should appear in the shape after the requested modification"
+      },
+      "agent_request": {
+        "type": "object",
+        "description": "Structured description of how the text should be modified",
+        "properties": {
+          "task_description": {
+            "type": "string",
+            "description": "Natural language description of the task"
+          },
+          "action_type": {
+            "type": "string",
+            "description": "Type of action to perform (e.g., remove, rewrite, summarize)"
+          },
+          "slide_contents": {
+            "type": "object",
+            "description": "Additional structured instructions related to the slide text"
+          }
+        },
+        "required": ["task_description", "action_type", "slide_contents"]
+      },
+      "container": {
+        "type": "string",
+        "enum": ["shape", "table_cell"],
+        "default": "shape",
+        "description": "Target container type"
+      },
+      "row_index": {
+        "type": "integer",
+        "description": "1-based row index (required if container=table_cell)"
+      },
+      "col_index": {
+        "type": "integer",
+        "description": "1-based column index (required if container=table_cell)"
+      }
+    },
+    "required": [
+      "slide_number",
+      "shape_id",
+      "new_text",
+      "agent_request"
+    ]
+  }
+},
+    {
+        "type": "function",
+        "name": "manage_bullet_points",
+        "description": "Applies bullet or numbering styles to text.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "shape_id": {"type": "integer"},
+                "bullet_type": {
+                    "type": "string",
+                    "enum": ["bullet", "number", "none"]
+                },
+                "bullet_char": {"type": "string"},
+                "start_value": {"type": "integer"}
+            },
+            "required": ["slide_number", "shape_id"]
+        }
+    },    
+    {
+        "type": "function",
+        "name": "adjust_layout",
+        "description": "Adjusts shape position, size, and rotation.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "shape_id": {"type": "integer"},
+                "left": {"type": "number"},
+                "top": {"type": "number"},
+                "width": {"type": "number"},
+                "height": {"type": "number"},
+                "rotation": {"type": "number"}
+            },
+            "required": ["slide_number", "shape_id"]
+        }
+    },
+    {
+        "type": "function",
+        "name": "distribute_shapes",
+        "description": "Distributes multiple shapes evenly.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "shape_ids": {
+                    "type": "array",
+                    "items": {"type": "integer"}
+                },
+                "direction": {
+                    "type": "string",
+                    "enum": ["horizontal", "vertical"]
+                },
+                "spacing": {"type": "number"}
+            },
+            "required": ["slide_number", "shape_ids"]
+        }
+    },
+    {
+        "type": "function",
+        "name": "align_shapes",
+        "description": "Aligns multiple shapes relative to each other.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "shape_ids": {
+                    "type": "array",
+                    "items": {"type": "integer"}
+                },
+                "align_type": {
+                    "type": "string",
+                    "enum": ["left", "right", "top", "bottom", "center_h", "center_v"]
+                }
+            },
+            "required": ["slide_number", "shape_ids"]
+        }
+    },    
+    {
+        "type": "function",
+        "name": "manage_object",
+        "description": "Creates, deletes, or duplicates a shape.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "action": {
+                    "type": "string",
+                    "enum": ["add", "delete", "duplicate"]
+                },
+                "shape_id": {"type": "integer"},
+                "shape_type": {"type": "integer"},
+                "left": {"type": "number"},
+                "top": {"type": "number"},
+                "width": {"type": "number"},
+                "height": {"type": "number"},
+                "text": {"type": "string"}
+            },
+            "required": ["slide_number", "action"]
+        }
+    },
+    {
+        "type": "function",
+        "name": "add_textbox",
+        "description": "Adds a textbox to a slide.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "left": {"type": "number"},
+                "top": {"type": "number"},
+                "width": {"type": "number"},
+                "height": {"type": "number"},
+                "text": {"type": "string"}
+            },
+            "required": ["slide_number", "left", "top", "width", "height"]
+        }
+    },    
+    {
+        "type": "function",
+        "name": "apply_visual_style",
+        "description": "Applies fill, line, transparency, and shadow styles.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "shape_id": {"type": "integer"},
+                "bg_color_hex": {"type": "string"},
+                "line_color_hex": {"type": "string"},
+                "line_weight": {"type": "number"},
+                "line_style": {
+                    "type": "string",
+                    "enum": ["solid", "dash", "dot", "dash_dot"]
+                },
+                "transparency": {"type": "number"},
+                "shadow": {"type": "boolean"}
+            },
+            "required": ["slide_number", "shape_id"]
+        }
+    },
+    {
+        "type": "function",
+        "name": "apply_gradient_fill",
+        "description": "Applies a gradient fill to a shape.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"},
+                "shape_id": {"type": "integer"},
+                "color1_hex": {"type": "string"},
+                "color2_hex": {"type": "string"},
+                "gradient_type": {
+                    "type": "string",
+                    "enum": ["linear", "radial", "rectangular", "path"]
+                },
+                "angle": {"type": "number"}
+            },
+            "required": ["slide_number", "shape_id", "color1_hex", "color2_hex"]
+        }
+    },    
+    {
+        "type": "function",
+        "name": "add_slide",
+        "description": "Adds a new slide.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "layout_index": {"type": "integer"},
+                "position": {"type": "integer"}
+            }
+        }
+    },
+    {
+        "type": "function",
+        "name": "delete_slide",
+        "description": "Deletes a slide.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"}
+            },
+            "required": ["slide_number"]
+        }
+    },
+    {
+        "type": "function",
+        "name": "duplicate_slide",
+        "description": "Duplicates a slide.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "slide_number": {"type": "integer"}
+            },
+            "required": ["slide_number"]
+        }
+    }
+
+]

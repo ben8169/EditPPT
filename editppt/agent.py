@@ -1,12 +1,18 @@
 import re
 from copy import deepcopy
 import time
+import json
 
-from tools import TOOLS_SCHEMA, FUNCTION_MAP
+from tools import *
 from llm_client import *
 from prompts import *
 from logtime import *
 from utils import parse_active_slide_objects
+
+with open("tools_schema.json", "r", encoding="utf-8") as f:
+    TOOLS_SCHEMA = json.load(f)  
+
+
 
 class EditAgent:
     def __init__(self, container, model: str):
@@ -101,12 +107,25 @@ class EditAgent:
             with open(f"logfiles/{TIMESTAMP}/agent_Message_retry_{retry_count}.json", "w", encoding="utf-8") as f:
                 json.dump(self.messages, f, ensure_ascii=False, indent=4)
 
-            # Tool 실행 (container 내의 최신 prs 전달)
+            # Tool 실행 
             for tool_call in tool_calls:
                 function_name = tool_call["name"]
                 function_args = tool_call["arguments"]
                 logger.info(f"Tool Call: {function_name}({function_args})")
-                self.execute_tool(function_name, function_args)
+                # 임시 조치.. Tool에서 json이 필요함
+                if function_name == "set_text_style_preserve_runs":
+                    function_args["slide_json"] = contents
+                    for key in ["bold", "italic", "underline", "font_name", "font_size"]:
+                        if key in function_args and function_args[key] is False:
+                            del function_args[key]
+                if function_name == "replace_shape_text":
+                    function_args["slide_json"] = contents
+                    function_args["agent_request"] = description, action, detailed_contents
+                # if function_name == "replace_text_from_textbox":
+                #     for key in ["bold", "italic", "underline", "font_name", "font_size"]:
+                #         if key in function_args and function_args[key] is False:
+                #             del function_args[key]            
+                self._execute_tool(function_name, function_args)
 
             # Validation 1 (Text/Logic)
             valid, reason = parser.update_after_edit(
@@ -125,7 +144,8 @@ class EditAgent:
                     valid, reason = vision_validator_agent.process(
                         page_number=page_number,
                         agent_request=action,
-                        parsed_contents=contents)
+                        parsed_contents=contents,
+                        used_tools=tool_calls)
                     
                     if valid:
                         # [최종 성공]
@@ -168,7 +188,7 @@ class EditAgent:
         time.sleep(0.5)
         self.container.prs = ppt_app.Presentations.Open(os.path.abspath(self.backup_path))
 
-    def execute_tool(self, name, args):
+    def _execute_tool(self, name, args):
         if name not in FUNCTION_MAP:
             return f"Error: Tool '{name}' not found."
         try:
@@ -195,7 +215,7 @@ class VisionValidatorAgent:
             return None
         return cls(container, model)
     
-    def process(self, page_number, agent_request, parsed_contents):
+    def process(self, page_number, agent_request, parsed_contents, used_tools):
         if not os.path.exists(self.abs_output_path):
             os.makedirs(self.abs_output_path)
 
@@ -213,7 +233,7 @@ class VisionValidatorAgent:
                 {
                 "role": "user",
                 "content": [
-                    {"type": "input_text", "text": create_vision_validator_agent_system_prompt(agent_request, parsed_contents)},
+                    {"type": "input_text", "text": create_vision_validator_agent_system_prompt(agent_request, parsed_contents, used_tools)},
                     {
                         "type": "input_image",
                         "image_url": f"data:image/png;base64,{encoded_image}"

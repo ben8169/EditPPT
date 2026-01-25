@@ -49,14 +49,14 @@
 
 # # --- [B] Text Content Editing ---
 
-# def update_text(prs, slide_index, shape_id, new_text):
-#     """Updates the actual text content inside a shape."""
-#     shape = find_shape_by_id(prs, slide_index, shape_id)
-#     if not shape.HasTextFrame:
-#         return f"Error: Shape {shape_id} does not support text editing."
+def update_text(prs, slide_index, shape_id, new_text):
+    """Updates the actual text content inside a shape."""
+    shape = find_shape_by_id(prs, slide_index, shape_id)
+    if not shape.HasTextFrame:
+        return f"Error: Shape {shape_id} does not support text editing."
     
-#     shape.TextFrame.TextRange.Text = new_text
-#     return f"Successfully updated text for Shape {shape_id}."
+    shape.TextFrame.TextRange.Text = new_text
+    return f"Successfully updated text for Shape {shape_id}."
 
 
 # # --- [C] Layout / Geometry Editing ---
@@ -833,3 +833,325 @@ FUNCTION_MAP = {
     # [F] Consistency / Polishing
     "align_shape_to_shape": align_shape_to_shape,
 }
+
+
+
+
+
+
+
+
+
+############# Legacy (26.01.21)#################
+
+# def set_text_style(prs, slide_number, shape_id, font_size=None, color_hex=None, 
+#                    bold=None, italic=None, underline=None, font_name=None,
+#                    paragraph_index=None, char_start=None, char_end=None):
+#     """
+#     Modifies text styles with support for partial text selection.
+    
+#     Args:
+#         paragraph_index: Specific paragraph to style (0-based, None = all)
+#         char_start, char_end: Character range within text (None = all)
+#     """
+#     shape = find_shape_by_id(prs, slide_number, shape_id)
+#     if not shape.HasTextFrame:
+#         return f"Error: Shape {shape_id} cannot contain text."
+    
+#     # Select target text range
+#     if paragraph_index is not None:
+#         tr = shape.TextFrame.TextRange.Paragraphs(paragraph_index + 1)
+#     elif char_start is not None and char_end is not None:
+#         tr = shape.TextFrame.TextRange.Characters(char_start, char_end - char_start)
+#     else:
+#         tr = shape.TextFrame.TextRange
+    
+#     # Apply styles
+#     if font_size: tr.Font.Size = font_size
+#     if bold is not None: tr.Font.Bold = bold
+#     if italic is not None: tr.Font.Italic = italic
+#     if underline is not None: tr.Font.Underline = underline
+#     if font_name: tr.Font.Name = font_name
+#     if color_hex: tr.Font.Color.RGB = _hex_to_rgb_int(color_hex)
+    
+#     return f"Successfully updated style for Shape {shape_id}."
+
+
+
+#####################################################################################
+############# Legacy (26.01.24)#################
+#####################################################################################
+
+# def set_text_style_by_char_range(
+#     prs,
+#     slide_number: int,
+#     shape_id: int,
+#     char_start: int,
+#     target_text: str,
+#     *,
+#     char_end: int = None,
+#     container: str = "shape",
+#     row_index: int = None,
+#     col_index: int = None,
+#     font_name: str = None,
+#     font_size: Union[int, float] = None,
+#     bold: Optional[bool] = None,
+#     italic: Optional[bool] = None,
+#     underline: Optional[bool] = None,
+#     color_hex: str = None,
+# ):
+#     # 1. live text read
+#     text, _ = _get_text_with_offsets(
+#         prs,
+#         slide_number,
+#         shape_id,
+#         container=container,
+#         row_index=row_index,
+#         col_index=col_index,
+#     )
+
+#     # 2. normalize range
+#     start, end = _normalize_char_range(
+#         text=text,
+#         char_start=char_start,
+#         target_text=target_text,
+#         char_end=char_end,
+#     )
+
+#     # 3. resolve TextRange
+#     shape = _find_shape_by_id(prs, slide_number, shape_id)
+
+#     if container == "shape":
+#         tr = shape.TextFrame.TextRange
+#     else:
+#         tr = shape.Table.Cell(row_index, col_index).Shape.TextFrame.TextRange
+
+#     # PowerPoint is 1-based
+#     target = tr.Characters(start + 1, end - start)
+#     font = target.Font
+
+#     # 4. apply styles
+#     if font_name is not None:
+#         font.Name = font_name
+#     if font_size is not None:
+#         font.Size = font_size
+#     if bold is not None:
+#         font.Bold = int(bold)
+#     if italic is not None:
+#         font.Italic = int(italic)
+#     if underline is not None:
+#         font.Underline = int(underline)
+#     if color_hex is not None:
+#         font.Color.RGB = _hex_to_rgb_int(color_hex)
+
+#     return {
+#         "applied_range": [start, end],
+#         "text": target_text,
+#         "shape_id": shape_id,
+#         "slide": slide_number
+#     }
+
+    # {
+    # "type": "function",
+    # "name": "set_text_style_by_char_range",
+    # "description": "Modify text style (font, size, color, emphasis) of a specific character range without changing text content.",
+    # "parameters": {
+    #     "type": "object",
+    #     "properties": {
+    #     "slide_number": {
+    #         "type": "integer",
+    #         "description": "1-based slide index"
+    #     },
+    #     "shape_id": {
+    #         "type": "integer",
+    #         "description": "PowerPoint Shape ID"
+    #     },
+    #     "char_start": {
+    #         "type": "integer",
+    #         "description": "0-based character start index (trusted)"
+    #     },
+    #     "target_text": {
+    #         "type": "string",
+    #         "description": "Exact text to be styled (used for range validation)"
+    #     },
+    #     "char_end": {
+    #         "type": "integer",
+    #         "description": "Optional end index (used only for fallback validation)"
+    #     },
+
+    #     "container": {
+    #         "type": "string",
+    #         "enum": ["shape", "table_cell"],
+    #         "default": "shape"
+    #     },
+    #     "row_index": {
+    #         "type": "integer",
+    #         "description": "1-based row index (required if container=table_cell)"
+    #     },
+    #     "col_index": {
+    #         "type": "integer",
+    #         "description": "1-based column index (required if container=table_cell)"
+    #     },
+
+    #     "font_name": { "type": "string" },
+    #     "font_size": { "type": "number" },
+    #     "bold": { "type": "boolean" },
+    #     "italic": { "type": "boolean" },
+    #     "underline": { "type": "boolean" },
+    #     "color_hex": {
+    #         "type": "string",
+    #         "description": "HEX color string, e.g. #FF0000"
+    #     }
+    #     },
+    #     "required": [
+    #     "slide_number",
+    #     "shape_id",
+    #     "char_start",
+    #     "target_text"
+    #     ]
+    # }
+    # },
+
+#####################################################################################
+# def edit_text_content_by_char_range(
+#     prs,
+#     slide_number: int,
+#     shape_id: int,
+#     char_start: int,
+#     target_text: str,
+#     *,
+#     operation: str,                 # "insert" | "replace" | "delete"
+#     new_text: str = "",
+#     char_end: int = None,
+#     container: str = "shape",
+#     row_index: int = None,
+#     col_index: int = None,
+# ):
+#     """
+#     Edit text content ONLY (no style changes).
+#     """
+
+#     text, _ = _get_text_with_offsets(
+#         prs,
+#         slide_number,
+#         shape_id,
+#         container=container,
+#         row_index=row_index,
+#         col_index=col_index,
+#     )
+
+#     start, end = _normalize_char_range(
+#         text=text,
+#         char_start=char_start,
+#         target_text=target_text,
+#         char_end=char_end,
+#     )
+
+#     shape = _find_shape_by_id(prs, slide_number, shape_id)
+
+#     if container == "shape":
+#         tr = shape.TextFrame.TextRange
+#     else:
+#         tr = shape.Table.Cell(row_index, col_index).Shape.TextFrame.TextRange
+
+#     # PowerPoint is 1-based
+#     start_pos = start + 1
+#     length = end - start
+
+#     target_range = tr.Characters(start_pos, length)
+
+#     # 4️⃣ apply operation (STYLE PRESERVED)
+#     if operation == "insert":
+#         # insert AFTER the target range
+#         target_range.InsertAfter(new_text)
+
+#     elif operation == "delete":
+#         target_range.Delete()
+
+#     elif operation == "replace":
+#         # ⭐ 핵심: anchor 먼저 확보
+#         anchor = tr.Characters(start_pos, 0)
+
+#         # 1) 기존 텍스트 삭제
+#         target_range.Delete()
+
+#         # 2) anchor 위치에 삽입
+#         anchor.InsertAfter(new_text)
+        
+
+#     else:
+#         raise ValueError(f"Unknown operation: {operation}")
+
+#     return {
+#         "operation": operation,
+#         "range": [start, end],
+#         "original_text": target_text,
+#         "new_text": new_text,
+#         "shape_id": shape_id,
+#         "slide": slide_number
+#     }
+
+
+# {
+#     "type": "function",
+#     "name": "edit_text_content_by_char_range",
+#     "description": "Edit text content only (insert, replace, delete) while preserving existing text styles.",
+#     "parameters": {
+#         "type": "object",
+#         "properties": {
+#         "slide_number": {
+#             "type": "integer",
+#             "description": "1-based slide index"
+#         },
+#         "shape_id": {
+#             "type": "integer",
+#             "description": "PowerPoint Shape ID"
+#         },
+#         "char_start": {
+#             "type": "integer",
+#             "description": "0-based character start index (trusted)"
+#         },
+#         "target_text": {
+#             "type": "string",
+#             "description": "Exact text to be edited (used for range validation)"
+#         },
+#         "char_end": {
+#             "type": "integer",
+#             "description": "Optional end index (used only for fallback validation)"
+#         },
+
+#         "operation": {
+#             "type": "string",
+#             "enum": ["insert", "replace", "delete"],
+#             "description": "Type of text edit operation"
+#         },
+#         "new_text": {
+#             "type": "string",
+#             "description": "Text to insert or replace with (ignored for delete)",
+#             "default": ""
+#         },
+
+#         "container": {
+#             "type": "string",
+#             "enum": ["shape", "table_cell"],
+#             "default": "shape"
+#         },
+#         "row_index": {
+#             "type": "integer",
+#             "description": "1-based row index (required if container=table_cell)"
+#         },
+#         "col_index": {
+#             "type": "integer",
+#             "description": "1-based column index (required if container=table_cell)"
+#         }
+#         },
+#         "required": [
+#         "slide_number",
+#         "shape_id",
+#         "char_start",
+#         "target_text",
+#         "operation"
+#         ]
+#     }
+#     }
+#####################################################################################

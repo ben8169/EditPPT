@@ -10,8 +10,11 @@ import win32com.client
 from logtime import *
 
 class Planner:
-    def __init__(self, model):
-        self.system_prompt = create_plan_prompt()
+    def __init__(self, model, slide_name, total_slide_numbers):
+        self.slide_name = slide_name
+        self.total_slide_numbers = total_slide_numbers
+        
+        self.system_prompt = create_plan_prompt(self.slide_name, self.total_slide_numbers)
         self.model = model
 
     def __call__(self, user_input: str):
