@@ -1,8 +1,17 @@
 .env
 .venv/
-.todo
+logfiles/
+test case/
+.SlideScreenshots/
+*.pptx
+instructions.txt
+
 editppt/__pycache__
+editppt/tools/__pycache__
+editppt/utils/__pycache__
+editppt/examples/
+editppt/experiments/
+editppt/legacy/
 editppt/extracted_images/
 editppt/result*
-editppt/*.json
-
+editppt/*.pptx

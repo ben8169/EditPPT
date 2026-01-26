@@ -8,8 +8,8 @@ import json
 import ast
 import time
 
-from logtime import *
-from msoffice_map import SHAPE_TYPE_MAP
+from editppt.utils.logger_manual import *
+from editppt.utils.msoffice_map import SHAPE_TYPE_MAP
 
 
 def parse_llm_response(response):

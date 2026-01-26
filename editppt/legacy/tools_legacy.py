@@ -1155,3 +1155,429 @@ FUNCTION_MAP = {
 #     }
 #     }
 #####################################################################################
+
+
+
+#####################################################################################
+############# Legacy (26.01.26)#################
+#####################################################################################
+
+# def _resolve_runs(
+#     prs,
+#     slide_number,
+#     shape_id,
+#     container="shape",
+#     row_index=None,
+#     col_index=None
+# ):
+#     shape = _find_shape_by_id(prs, slide_number, shape_id)
+
+#     if container == "shape":
+#         return _get_text_runs_from_shape(shape)
+
+#     if container == "table_cell":
+#         if row_index is None or col_index is None:
+#             raise ValueError("row_index and col_index required for table_cell.")
+#         return _get_text_runs_from_table_cell(shape, row_index, col_index)
+
+#     raise ValueError(f"Unknown container type: {container}")
+
+
+
+# def _split_run_by_range(text_range, start, end):
+#     """
+#     Split a TextRange into [before][target][after] and
+#     return the target TextRange.
+#     """
+#     full_len = len(text_range.Text)
+
+#     if start < 0 or end > full_len or start >= end:
+#         raise ValueError("Invalid char range inside run.")
+
+#     # before
+#     if start > 0:
+#         text_range.Characters(1, start).InsertAfter(
+#             text_range.Characters(start + 1, full_len - start).Text
+#         )
+#         target = text_range.Characters(1, end - start)
+#     else:
+#         target = text_range.Characters(1, end)
+
+#     # after 제거
+#     if end < full_len:
+#         target.Characters(end - start + 1, full_len - end).Delete()
+
+#     return target
+
+
+# def _resolve_insert_position(
+#     text: str,
+#     preceding_text: str,
+#     char_start_index: int,
+# ):
+#     if preceding_text:
+#         idx = text.find(preceding_text)
+#         if idx != -1:
+#             return idx + len(preceding_text)
+
+#     # fallback: clamp index
+#     return max(0, min(len(text), char_start_index))
+
+
+# def insert_text_from_textbox(
+#     prs,
+#     slide_number,
+#     shape_id,
+#     preceding_text,
+#     char_start_index,
+#     new_text,
+#     *,
+#     container="shape",
+#     row_index=None,
+#     col_index=None,
+# ):
+#     text, _ = _get_text_with_offsets(
+#         prs, slide_number, shape_id,
+#         container=container,
+#         row_index=row_index,
+#         col_index=col_index,
+#     )
+
+#     insert_pos = _resolve_insert_position(
+#         text=text,
+#         preceding_text=preceding_text,
+#         char_start_index=char_start_index,
+#     )
+
+#     shape = _find_shape_by_id(prs, slide_number, shape_id)
+#     tr = (
+#         shape.TextFrame.TextRange
+#         if container == "shape"
+#         else shape.Table.Cell(row_index, col_index).Shape.TextFrame.TextRange
+#     )
+
+#     # PowerPoint is 1-based
+#     anchor = tr.Characters(insert_pos + 1, 0)
+
+#     # style is inherited from anchor
+#     anchor.InsertAfter(new_text)
+
+#     return {
+#         "operation": "insert",
+#         "insert_pos": insert_pos,
+#         "new_text": new_text,
+#         "shape_id": shape_id,
+#         "slide": slide_number,
+#     }
+
+
+
+
+# def delete_text_from_textbox(
+#     prs,
+#     slide_number,
+#     shape_id,
+#     target_text,
+#     char_start_index,
+#     *,
+#     container="shape",
+#     row_index=None,
+#     col_index=None,
+# ):
+#     text, _ = _get_text_with_offsets(
+#         prs, slide_number, shape_id,
+#         container=container,
+#         row_index=row_index,
+#         col_index=col_index,
+#     )
+
+#     start, end = _normalize_char_range(
+#         text=text,
+#         char_start_index=char_start_index,
+#         target_text=target_text,
+#     )
+
+#     shape = _find_shape_by_id(prs, slide_number, shape_id)
+#     tr = (
+#         shape.TextFrame.TextRange
+#         if container == "shape"
+#         else shape.Table.Cell(row_index, col_index).Shape.TextFrame.TextRange
+#     )
+
+#     tr.Characters(start + 1, end - start).Delete()
+
+#     return {
+#         "operation": "delete",
+#         "range": [start, end],
+#         "deleted_text": target_text,
+#         "shape_id": shape_id,
+#         "slide": slide_number,
+#     }
+
+
+
+
+def _capture_font_style(char_range):
+    font = char_range.Font
+    return {
+        "Name": font.Name,
+        "Size": font.Size,
+        "Bold": font.Bold,
+        "Italic": font.Italic,
+        "Underline": font.Underline,
+        "Color": font.Color.RGB,
+    }
+
+def _apply_font_style(char_range, style):
+    font = char_range.Font
+    font.Name = style["Name"]
+    font.Size = style["Size"]
+    font.Bold = style["Bold"]
+    font.Italic = style["Italic"]
+    font.Underline = style["Underline"]
+    font.Color.RGB = style["Color"]
+
+
+# def replace_text_from_textbox(
+#     prs,
+#     slide_number,
+#     shape_id,
+#     target_text,
+#     char_start_index,
+#     new_text,
+#     slide_json,
+#     *,
+#     container="shape",
+#     row_index=None,
+#     col_index=None,
+# ):
+#     # 1. 기존 텍스트와 정규화
+#     text, _ = _get_text_with_offsets(
+#         prs, slide_number, shape_id,
+#         container=container,
+#         row_index=row_index,
+#         col_index=col_index,
+#     )
+
+#     start, end = _normalize_char_range(
+#         text=text,
+#         char_start_index=char_start_index,
+#         target_text=target_text,
+#     )
+
+#     runs = _get_runs_by_shape_id(slide_json, shape_id)
+
+#     # 2. Shape / TextRange 접근
+#     slide = prs.Slides(slide_number)
+#     shape = next((s for s in slide.Shapes if s.Id == shape_id), None)
+#     if not shape:
+#         raise ValueError(f"Shape {shape_id} not found in slide {slide_number}")
+
+#     tr = (
+#         shape.TextFrame.TextRange
+#         if container == "shape"
+#         else shape.Table.Cell(row_index, col_index).Shape.TextFrame.TextRange
+#     )
+
+#     old_range = tr.Characters(start + 1, end - start)
+
+#     # 3. 단일 Run인지 확인
+#     runs_in_range = [
+#         r for r in runs
+#         if r['Run_Start_Index'] <= start < r['Run_Start_Index'] + len(r['Text'])
+#     ]
+#     single_run = len(runs_in_range) == 1 and (start + len(target_text) <= runs_in_range[0]['Run_Start_Index'] + len(runs_in_range[0]['Text']))
+
+#     if single_run:
+#         # 단일 Run: 스타일 보존 후 교체
+#         style = _capture_font_style(old_range)
+#         old_range.Text = new_text
+#         new_range = tr.Characters(start + 1, len(new_text))
+#         _apply_font_style(new_range, style)
+
+#         # # AutoShape 적용
+#         # if hasattr(shape.TextFrame, "AutoSize"):
+#         #     shape.TextFrame.AutoSize = 1  # ppAutoSizeShapeToFitText
+
+#         return {
+#             "operation": "replace_single_run",
+#             "slide": slide_number,
+#             "shape_id": shape_id,
+#             "new_text": new_text,
+#         }
+
+#     # 4. 다중 Run: 기존 LLM 처리
+#     llm_prompt = [
+#         {"role": "system", "content": STYLE_MAPPING_PROMPT},
+#         {
+#             "role": "user",
+#             "content": json.dumps({
+#                 "old_runs": runs,
+#                 "target_text": text[start:end],
+#                 "new_text": new_text
+#             }, ensure_ascii=False)
+#         }
+#     ]
+
+#     raw_response = call_llm(model='gpt-4.1', messages=llm_prompt)
+#     response = raw_response.output[0].content[0].text
+#     new_runs = parse_llm_response(response)
+#     new_runs = new_runs[0] if isinstance(new_runs, list) and len(new_runs) > 0 else new_runs
+
+#     old_range.Text = ""
+#     current_range = old_range
+
+#     for run_info in new_runs:
+#         if not isinstance(run_info, dict): 
+#             continue
+#         text_seg = run_info.get("Text", "")
+#         if not text_seg: 
+#             continue
+#         new_run_range = current_range.InsertAfter(text_seg)
+#         font_info = run_info.get("Font", {})
+#         f = new_run_range.Font
+#         if font_info.get("Name"): f.Name = font_info["Name"]
+#         if font_info.get("Size"): f.Size = font_info["Size"]
+#         f.Bold = -1 if font_info.get("Bold") else 0
+#         f.Italic = -1 if font_info.get("Italic") else 0
+#         f.Underline = -1 if font_info.get("Underline") else 0
+#         color = font_info.get("Color")
+#         if color and all(k in color for k in ("R","G","B")):
+#             f.Color.RGB = color["R"] + (color["G"] << 8) + (color["B"] << 16)
+#         current_range = new_run_range
+
+#     # AutoShape 적용
+#     if hasattr(shape.TextFrame, "AutoSize"):
+#         shape.TextFrame.AutoSize = 1
+
+#     return {
+#         "operation": "replace_runs_llm",
+#         "slide": slide_number,
+#         "shape_id": shape_id,
+#         "new_runs": new_runs,
+#     }
+
+
+# def replace_text_from_textbox(
+#     prs,
+#     slide_number,
+#     shape_id,
+#     target_text,
+#     char_start_index,
+#     new_text,
+#     slide_json,
+#     *,
+#     container="shape",
+#     row_index=None,
+#     col_index=None,
+# ):
+#     #  기존 텍스트 + char_start_index 정규화
+#     text, _ = _get_text_with_offsets(
+#         prs, slide_number, shape_id,
+#         container=container,
+#         row_index=row_index,
+#         col_index=col_index,
+#     )
+
+#     start, end = _normalize_char_range(
+#         text=text,
+#         char_start_index=char_start_index,
+#         target_text=target_text,
+#     )
+
+#     runs = _get_runs_by_shape_id(slide_json, shape_id)
+
+#     # Shape / TextRange 접근
+#     slide = prs.Slides(slide_number)
+#     shape = None
+#     for s in slide.Shapes:
+#         if s.Id == shape_id:
+#             shape = s
+#             break
+#     if not shape:
+#         raise ValueError(f"Shape {shape_id} not found in slide {slide_number}")
+
+#     if container == "shape":
+#         tr = shape.TextFrame.TextRange
+#     elif container == "table":
+#         tr = shape.Table.Cell(row_index, col_index).Shape.TextFrame.TextRange
+#     else:
+#         raise ValueError(f"Unknown container {container}")
+
+#     # 적용 범위 Run-level 수집
+#     old_range = tr.Characters(start + 1, end - start)
+
+#     llm_prompt = [
+#         {"role": "system", "content": STYLE_MAPPING_PROMPT},
+#         {
+#             "role": "user",
+#             "content": json.dumps({
+#                 "old_runs": runs,
+#                 "target_text": text[start:end],
+#                 "new_text": new_text
+#             }, ensure_ascii=False)
+#         }
+#     ]
+
+#     raw_response = call_llm(model='gpt-4.1', messages=llm_prompt)
+#     # response_json = response.model_dump_json(indent=2)
+
+#     # with open("replace_text_llm_raw.json", "w", encoding="utf-8") as f:
+#     #     f.write(response_json)
+
+    
+#     # 1. LLM 응답에서 텍스트 추출
+#     response = raw_response.output[0].content[0].text
+
+#     # 2. JSON 부분만 추출하여 파싱
+#     if isinstance(response,str):
+#         print('new_run is str')
+#         new_runs = parse_llm_response(response)
+#         new_runs = new_runs[0]
+#     else:
+#         new_runs = response
+    
+#     # print(new_runs)
+#     # print(type(new_runs))
+#     # 3. PPT 적용 로직 (기존과 동일)
+#     old_range.Text = ""
+#     current_range = old_range
+    
+#     for run_info in new_runs:
+#         if not isinstance(run_info, dict):
+#             continue
+            
+#         text_seg = run_info.get("Text", "")
+#         if not text_seg:
+#             continue
+
+#         # InsertAfter는 삽입된 텍스트를 나타내는 새 TextRange 객체를 반환합니다.
+#         new_run_range = current_range.InsertAfter(text_seg)
+        
+#         # 폰트 스타일 적용
+#         font_info = run_info.get("Font", {})
+#         f = new_run_range.Font
+        
+#         if font_info.get("Name"): f.Name = font_info["Name"]
+#         if font_info.get("Size"): f.Size = font_info["Size"]
+        
+#         # win32com/VBA: True는 -1(msoTrue), False는 0(msoFalse)
+#         f.Bold = -1 if font_info.get("Bold") else 0
+#         f.Italic = -1 if font_info.get("Italic") else 0
+#         f.Underline = -1 if font_info.get("Underline") else 0
+        
+#         # 색상 적용 (RGB)
+#         color = font_info.get("Color")
+#         if color and all(k in color for k in ("R", "G", "B")):
+#             f.Color.RGB = color["R"] + (color["G"] << 8) + (color["B"] << 16)
+        
+#         # 다음 루프에서는 방금 삽입한 범위 뒤에 텍스트를 추가하도록 업데이트
+#         current_range = new_run_range
+
+#     return {
+#         "operation": "replace_runs_llm",
+#         "slide": slide_number,
+#         "shape_id": shape_id,
+#         "new_runs": new_runs,
+#     }
+

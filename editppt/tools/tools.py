@@ -1,12 +1,11 @@
-import win32com.client
 import json
 import re
 import time
 import os
 
-from llm_client import call_llm
-from utils import parse_llm_response
-from prompts import STYLE_MAPPING_PROMPT
+from editppt.utils.llm_client import call_llm
+from editppt.utils.utils import parse_llm_response
+from editppt.prompts import STYLE_MAPPING_PROMPT
 
 import logging
 logger = logging.getLogger(__name__)
