@@ -298,10 +298,7 @@ def make_run_dict(text_range_segment):
 
 def parse_paragraph_bullets(text_frame):
     """
-    TextFrame에서 문단 단위의 bullet 정보를 추출
-    - Bullet 여부
-    - 들여쓰기 정보
-    - Bullet Level (파워포인트 단락 레벨)
+    Extract paragraph-level structure and bullet metadata from TextFrame.
     """
     result = []
 
@@ -325,14 +322,28 @@ def parse_paragraph_bullets(text_frame):
 
             has_bullet = bool(safe(bullet, "Visible", False))
 
+            # para_info = {
+            #     "ParagraphIndex": i,
+            #     "Text": safe(p, "Text", "").rstrip("\r\n"),
+            #     "HasBullet": has_bullet,
+            #     "Indent": {
+            #         "Level": safe(p, "Level"),
+            #         "LeftIndent": safe(pf, "LeftIndent"),
+            #         "FirstLineIndent": safe(pf, "FirstLineIndent"),
+            #     }
+            # }
+
             if has_bullet and bullet:
                 para_info = {
                     "ParagraphIndex": i,
                     "Text": safe(p, "Text", "").rstrip("\r\n"),
                     "HasBullet": has_bullet,
-                    "Level": safe(p, "Level"),
+                    "Indent": {
+                        "Level": safe(p, "Level"),
+                        "LeftIndent": safe(pf, "LeftIndent"),
+                        "FirstLineIndent": safe(pf, "FirstLineIndent"),
+                    }
                 }
-
                 para_info.update({
                     "BulletCharacter": safe(bullet, "Character"),
                     "BulletType": safe(bullet, "Type"),
@@ -340,15 +351,69 @@ def parse_paragraph_bullets(text_frame):
                     "BulletFontName": safe(safe(bullet, "Font"), "Name"),
                 })
 
-                # 들여쓰기(참고용)
-                para_info["FirstLineIndent"] = safe(pf, "FirstLineIndent")
-                para_info["LeftIndent"] = safe(pf, "LeftIndent")
+            result.append(para_info)
 
-                result.append(para_info)
         except Exception:
             continue
 
     return result
+
+
+def build_paragraph_ir_from_textframe(runs, full_text, paragraphs):
+    """
+    Build canonical paragraph IR from a PowerPoint TextFrame JSON.
+    Preserves minimal line-break metadata even for empty paragraphs.
+    """
+
+    paragraph_ir = []
+
+    for p in paragraphs:
+        paragraph_ir.append({
+            "paragraph_index": p["ParagraphIndex"],
+            "text": p.get("Text", ""),  # strip 제거, 원문 그대로
+            "has_bullet": p.get("HasBullet", False),
+            "bullet_meta": {
+                "BulletCharacter": p.get("BulletCharacter"),
+                "BulletType": p.get("BulletType"),
+                "BulletRelativeSize": p.get("BulletRelativeSize"),
+                "BulletFontName": p.get("BulletFontName"),
+                "Level": p.get("Level"),
+                "FirstLineIndent": p.get("FirstLineIndent"),
+                "LeftIndent": p.get("LeftIndent"),
+            },
+            "runs": [],
+        })
+
+    if not paragraph_ir:
+        return []
+
+    # paragraph별 text span (start / end) 계산
+    cursor = 0
+    for p in paragraph_ir:
+        text = p["text"]
+        start = full_text.find(text, cursor)
+        if start == -1:
+            raise ValueError(
+                f"Paragraph text not found in full_text. "
+                f"ParagraphIndex={p['paragraph_index']}"
+            )
+        end = start + len(text)
+        p["start"] = start
+        p["end"] = end
+        cursor = end
+
+    # Run을 paragraph에 귀속
+    for run in runs:
+        run_start = run.get("Run_Start_Index")
+        if run_start is None:
+            continue
+        for p in paragraph_ir:
+            if p["start"] <= run_start < p["end"]:
+                p["runs"].append(run)
+                break
+
+    return paragraph_ir
+
 
 def parse_text_frame_debug(text_frame):
     out = {"Has Text": False}

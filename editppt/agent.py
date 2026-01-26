@@ -7,6 +7,8 @@ import shutil
 from copy import deepcopy
 
 
+import traceback
+
 from editppt.tools.tools import *
 from editppt.utils.llm_client import call_llm, call_llm_gemini
 from editppt.prompts import *
@@ -233,6 +235,7 @@ class EditAgent:
             return FUNCTION_MAP[name](self.container.prs, **args)
         except Exception as e:
             logger.error(f"Execution Error: {e}")
+            logger.error(traceback.format_exc())
             return f"Error: {str(e)}"
 
 
