@@ -5,11 +5,13 @@ import sys
 import argparse
 from pathlib import Path
 
+
 from loguru import logger
+
+import win32com.client
 
 from editppt.utils.logger_manual import *
 from editppt.utils.utils import *
-
 from editppt.agent import *
 from editppt.parser import Parser
 from editppt.planner import Planner

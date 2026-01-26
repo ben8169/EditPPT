@@ -232,13 +232,16 @@ def create_edit_agent_system_prompt(current_ppt_json:str) -> str:
     prompt= f"""You are a Presentation Editing Agent. 
 Use the current state of the slide shown below and orchestrate one or multiple tools, calling them repeatedly as appropriate, to carry out and complete the user's editing request.
 
-Notes: When the user's request is vague, use the following guidelines:
+Notes: 
+When the user's request is vague, use the following guidelines:
 - A typical [SHAPE] has its position coordinates at (x, y).
 - If the user does not specify coordinates, infer a reasonable (x, y) based on given layout patterns information.
 
 When inferring positions, follow these priorities in order:
 1) Preserve overall layout balance and symmetry.
 2) Align with related or referenced elements (e.g., images, subtitles).
+
+If the request has already been fulfilled or no changes are required, do not call any tools.
 
 {current_ppt_json}
 """

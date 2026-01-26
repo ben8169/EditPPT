@@ -1,4 +1,3 @@
-import win32com.client
 import pywintypes
 import openai
 from openai import OpenAI
@@ -6,10 +5,9 @@ from openai import OpenAI
 import re
 import json
 import ast
-import time
 
 from editppt.utils.logger_manual import *
-from editppt.utils.msoffice_map import SHAPE_TYPE_MAP
+from editppt.utils.msoffice_map import *
 
 
 def parse_llm_response(response):
@@ -50,7 +48,6 @@ def parse_llm_response(response):
             return parsed, None
         except Exception as e_ast:
             return None, (e_ast, payload)
-
 
 
 
@@ -164,60 +161,15 @@ def _call_gpt_api(prompt: str, api_key: str, model: str):
 
 def get_shape_type(shape_type):
     """Shape 유형 번호를 문자열로 변환"""
-    shape_types = {
-        1: "AutoShape", 
-        2: "CallOut",
-        3: "Chart",
-        4: "Comment",
-        5: "Freeform",
-        6: "Group",
-        7: "EmbeddedOLEObject",
-        8: "FormControl",
-        9: "Line",
-        10: "LinkedOLEObject",
-        11: "LinkedPicture",
-        12: "OLEControl",
-        13: "Picture",
-        14: "Placeholder",
-        15: "MediaObject", 
-        16: "TextEffect",
-        17: "TextBox",
-        18: "Table",
-        19: "SmartArt",
-        20: "WebVideo",
-        21: "ContentApp"
-    }
-    return shape_types.get(shape_type, f"Unknown Type ({shape_type})")
+    return SHAPE_TYPE_MAP.get(shape_type, f"Unknown Type ({shape_type})")
 
 def get_placeholder_type(placeholder_type):
     """Placeholder 유형 번호를 문자열로 변환"""
-    placeholder_types = {
-        1: "Title",
-        2: "Body",
-        3: "CenterTitle",
-        4: "SubTitle",
-        5: "VerticalTitle",
-        6: "VerticalBody",
-        7: "Object",
-        8: "Chart",
-        9: "Table",
-        10: "ClipArt",
-        11: "OrgChart",
-        12: "Media",
-        13: "VerticalObject",
-        14: "Picture",
-        15: "Slide Number",
-        16: "Header",
-        17: "Footer",
-        18: "Date",
-        19: "VerticalTitle2",
-        20: "VerticalBody2" 
-    }
-    return placeholder_types.get(placeholder_type, f"Unknown Placeholder ({placeholder_type})")
+    return PLACEHOLDER_TYPE_MAP.get(placeholder_type, f"Unknown Placeholder ({placeholder_type})")
 
-import win32com.client
+
+
 import traceback  # 오류 추적을 위해 추가
-
 
 def safe(obj, attr, default=None):
     """Safely get an attribute, returning default if an error occurs."""
@@ -443,7 +395,7 @@ def parse_text_frame_debug(text_frame):
 
     out["Runs"] = runs
 
-    # 🔹 여기서 문단/글머리표 정보 추가
+    #여기서 문단/글머리표 정보 추가
     out["Paragraphs"] = parse_paragraph_bullets(text_frame)
 
     return out
@@ -844,69 +796,6 @@ def parse_slide_properties(slide):
 
     return result
 
-
-
-# def parse_active_slide_objects(slide_num:int=1):
-#     """슬라이드 객체 파싱 메인 함수"""
-#     output = {} # 출력을 저장할 문자열 초기화
-    
-#     try:
-#         # Connect to running PowerPoint instance
-#         ppt = win32com.client.GetObject(Class="PowerPoint.Application")
-        
-#         # Get active presentation
-#         presentation = ppt.ActivePresentation
-        
-#         # Check if there is an active presentation
-#         if not presentation:
-#             output['status'] = "No active presentation found."
-#             return output['status']
-        
-#         # 프레젠테이션 정보 추가
-#         output["Presentation_Name"] = f"{presentation.Name}"
-#         output["Total_Slide_Number"] = f"{presentation.Slides.Count}"
-        
-#         # 슬라이드 범위 확인
-#         if slide_num > presentation.Slides.Count or slide_num < 1:
-#             output["status"] = f"Invalid slide number. Please provide a number between 1 and {presentation.Slides.Count}."
-#             return output["status"]
-        
-#         # Access the specified slide
-#         slide = presentation.Slides(slide_num)
-        
-#         # 슬라이드 속성 파싱
-#         output["Slide_Properties"] = parse_slide_properties(slide)
-        
-#         # Get the number of shapes in the slide
-#         shape_count = slide.Shapes.Count
-#         output["Objects_Overview"] = f"Found {shape_count} objects in slide number {slide_num}."
-#         output["Objects_Detail"] = []
-
-#         # Iterate through each shape
-#         for i in range(1, shape_count + 1):
-#             shape = slide.Shapes(i)
-#             shape_info = {
-#                 "Object_number": i,
-#                 "Shape_Id": shape.Id,
-#                 "Name": shape.Name,
-#                 "Type": get_shape_type(shape.Type),
-#                 "Position_Left": shape.Left,
-#                 "Position_Top": shape.Top,
-#                 "Size_Width": shape.Width,
-#                 "Size_Height": shape.Height,
-#                 "More_detail": parse_shape_details(shape),
-                
-#             }
-#             output["Objects_Detail"].append(shape_info)
-        
-#         # 슬라이드 노트 파싱
-#         output["Slide_Notes"] = parse_slide_notes(slide)
-#     except pywintypes.com_error as e:
-#         output["Error"] = f"COM error: {e}"
-#     # except Exception as e:
-#     #     output["Error"] = f"Error: {e}"
-
-#     return output
 
 def parse_active_slide_objects(slide_num: int, prs_obj):
     """
