@@ -1,7 +1,4 @@
 
-
-
-
 SHAPE_TYPE_MAP = {
     1: "AutoShape",
     2: "Callout",
@@ -30,6 +27,30 @@ SHAPE_TYPE_MAP = {
     25: "Web Video",
     26: "Content App"
 }
+
+PLACEHOLDER_TYPE_MAP = {
+        1: "Title",
+        2: "Body",
+        3: "CenterTitle",
+        4: "SubTitle",
+        5: "VerticalTitle",
+        6: "VerticalBody",
+        7: "Object",
+        8: "Chart",
+        9: "Table",
+        10: "ClipArt",
+        11: "OrgChart",
+        12: "Media",
+        13: "VerticalObject",
+        14: "Picture",
+        15: "Slide Number",
+        16: "Header",
+        17: "Footer",
+        18: "Date",
+        19: "VerticalTitle2",
+        20: "VerticalBody2" 
+    }
+
 
 
 
@@ -220,4 +241,36 @@ AUTOSHAPE_TYPE_MAP = {
   "183": ["msoShapeLineInverse","Line inverse"]
 }
 
-AUTOSHAPE_TYPE_MAP
+# AUTOSHAPE_TYPE_MAP
+
+#Bullet Point -> 보완필요
+
+# ID: [명칭, 예시]
+BULLET_STYLE_MAP = {
+    0: ["Mixed", ""],
+    1: ["AlphaLCPeriod", "a."],
+    2: ["AlphaUCPeriod", "A."],
+    3: ["ArabicParenRight", "1)"],
+    4: ["ArabicPeriod", "1."],
+    5: ["RomanLCParenBoth", "(i)"],
+    6: ["RomanLCPeriod", "i."],
+    7: ["RomanUCPeriod", "I."],
+    8: ["AlphaLCParenBoth", "(a)"],
+    9: ["AlphaLCParenRight", "a)"],
+    10: ["AlphaUCParenBoth", "(A)"],
+    11: ["AlphaUCParenRight", "A)"],
+    12: ["ArabicParenBoth", "(1)"],
+    13: ["ArabicPlain", "1"],
+    14: ["RomanLCParenRight", "i)"],
+    15: ["RomanUCParenBoth", "(I)"],
+    16: ["RomanUCParenRight", "I)"],
+}
+BULLET_CHAR_MAP = {
+    8226: ["Black Round Dot", "•"],
+    8211: ["En Dash Bar", "–"],
+    10004: ["Check Mark", "✔"],
+    9632: ["Black Square", "■"],
+    9675: ["Hollow Circle", "○"],
+    10146: ["Right Arrow", "➢"],
+    61623: ["Diamond", "◆"], # Wingdings 대응 문자
+}

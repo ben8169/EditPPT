@@ -12,10 +12,13 @@ import traceback
 from editppt.tools.tools import *
 from editppt.utils.llm_client import call_llm, call_llm_gemini
 from editppt.prompts import *
-from editppt.utils.logger_manual import log_path
+from editppt.utils.logger_manual import *
 from editppt.utils.utils import parse_active_slide_objects
 
 from pathlib import Path
+
+logger = init_logger()
+
 
 BASE_DIR = Path(__file__).resolve().parent
 SCHEMA_PATH = BASE_DIR / "tools" / "tools_schema.json"

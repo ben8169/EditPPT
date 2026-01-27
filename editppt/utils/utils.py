@@ -5,6 +5,7 @@ from openai import OpenAI
 import re
 import json
 import ast
+import unicodedata
 
 from editppt.utils.logger_manual import *
 from editppt.utils.msoffice_map import *
@@ -296,123 +297,258 @@ def make_run_dict(text_range_segment):
     return run
 
 
+
 def parse_paragraph_bullets(text_frame):
-    """
-    Extract paragraph-level structure and bullet metadata from TextFrame.
-    """
+    import unicodedata
     result = []
 
-    if not safe(text_frame, "HasText", False):
+    if not text_frame or not safe(text_frame, "HasText", False):
         return result
 
-    tr = safe(text_frame, "TextRange")
-    if not tr:
-        return result
-
+    tr = text_frame.TextRange
     try:
+        # 단락 개수만 먼저 파악
         para_count = tr.Paragraphs().Count
-    except Exception:
+    except:
         return result
+
+    style_counters = {}
 
     for i in range(1, para_count + 1):
         try:
-            p = tr.Paragraphs(i)
-            pf = safe(p, "ParagraphFormat")
-            bullet = safe(pf, "Bullet")
+            # 변수에 담지 않고 tr.Paragraphs(i)로 직접 해당 단락 객체 획득
+            # (i) 호출은 i번째 단락만 포함하는 새로운 TextRange를 반환함
+            current_para = tr.Paragraphs(i)
+            
+            p_text = getattr(current_para, "Text", "")
+            if not p_text.strip() and i > 1: # 내용 없는 마지막 빈 줄 스킵
+                continue
+                
+            # clean_text = p_text.replace('\r', '').replace('\n', '').strip()
+            clean_text = p_text
+            
+            pf = current_para.ParagraphFormat
+            bullet = pf.Bullet
+            is_visible = (bullet.Visible != 0)
+            b_type = bullet.Type if is_visible else 0
+            
+            para_info = {
+                "ParagraphIndex": i - 1,
+                "Text": clean_text,
+                "HasBullet": is_visible and b_type != 0,
+                "IndentLevel": getattr(current_para, "IndentLevel", 1),
+            }
 
-            has_bullet = bool(safe(bullet, "Visible", False))
+            if para_info["HasBullet"]:
+                actual_label = ""
+                style_code = bullet.Style
+                style_info = BULLET_STYLE_MAP.get(style_code, ["Standard", "1."])
+                
+                if b_type == 2:  # Numbered
+                    # 스타일별 카운터 갱신 (enumerate 대용)
+                    c = style_counters.get(style_code, 0) + 1
+                    style_counters[style_code] = c
+                    
+                    try:
+                        # 실제 렌더링된 라벨 시도
+                        actual_label = current_para.TextRange.ListFormat.ListString
+                    except:
+                        actual_label = ""
+                    
+                    # 실패 시 캐싱된 포맷으로 생성
+                    if not actual_label:
+                        fmt = style_info[1]
+                        if "1" in fmt: actual_label = fmt.replace("1", str(c))
+                        elif "a" in fmt: actual_label = fmt.replace("a", chr(96 + (c % 26 or 26)))
+                        elif "A" in fmt: actual_label = fmt.replace("A", chr(64 + (c % 26 or 26)))
+                        else: actual_label = fmt
+                
+                elif b_type == 1:  # Symbol
+                    char_code = bullet.Character
+                    char_info = BULLET_CHAR_MAP.get(char_code, [None, "•"])
+                    actual_label = char_info[1]
 
-            # para_info = {
-            #     "ParagraphIndex": i,
-            #     "Text": safe(p, "Text", "").rstrip("\r\n"),
-            #     "HasBullet": has_bullet,
-            #     "Indent": {
-            #         "Level": safe(p, "Level"),
-            #         "LeftIndent": safe(pf, "LeftIndent"),
-            #         "FirstLineIndent": safe(pf, "FirstLineIndent"),
-            #     }
-            # }
-
-            if has_bullet and bullet:
-                para_info = {
-                    "ParagraphIndex": i,
-                    "Text": safe(p, "Text", "").rstrip("\r\n"),
-                    "HasBullet": has_bullet,
-                    "Indent": {
-                        "Level": safe(p, "Level"),
-                        "LeftIndent": safe(pf, "LeftIndent"),
-                        "FirstLineIndent": safe(pf, "FirstLineIndent"),
-                    }
-                }
                 para_info.update({
-                    "BulletCharacter": safe(bullet, "Character"),
-                    "BulletType": safe(bullet, "Type"),
-                    "BulletRelativeSize": safe(bullet, "RelativeSize"),
-                    "BulletFontName": safe(safe(bullet, "Font"), "Name"),
+                    "BulletType": b_type,
+                    "ActualLabel": actual_label,
+                    "BulletCharacter": style_info[0] if b_type == 2 else "Symbol",
+                    "BulletDescription": f"Bullet: {actual_label}",
+                    "BulletRelativeSize": getattr(bullet, "RelativeSize", 100),
                 })
 
             result.append(para_info)
-
-        except Exception:
+        except Exception as e:
+            # print(f"Debug - Para {i} Error: {e}")
             continue
 
     return result
 
+# def parse_paragraph_bullets(text_frame):
+#     """
+#     Extract paragraph-level structure and bullet metadata from TextFrame.
+#     """
+#     result = []
 
-def build_paragraph_ir_from_textframe(runs, full_text, paragraphs):
-    """
-    Build canonical paragraph IR from a PowerPoint TextFrame JSON.
-    Preserves minimal line-break metadata even for empty paragraphs.
-    """
+#     if not safe(text_frame, "HasText", False):
+#         return result
 
+#     tr = safe(text_frame, "TextRange")
+#     if not tr:
+#         return result
+
+#     try:
+#         para_count = tr.Paragraphs().Count
+#     except Exception:
+#         return result
+
+#     for i in range(1, para_count + 1):
+#         try:
+#             p = tr.Paragraphs(i)
+#             pf = safe(p, "ParagraphFormat")
+#             bullet = safe(pf, "Bullet")
+
+#             has_bullet = bool(safe(bullet, "Visible", False))
+
+#             # para_info = {
+#             #     "ParagraphIndex": i,
+#             #     "Text": safe(p, "Text", "").rstrip("\r\n"),
+#             #     "HasBullet": has_bullet,
+#             #     "Indent": {
+#             #         "Level": safe(p, "Level"),
+#             #         "LeftIndent": safe(pf, "LeftIndent"),
+#             #         "FirstLineIndent": safe(pf, "FirstLineIndent"),
+#             #     }
+#             # }
+
+#             if has_bullet and bullet:
+#                 para_info = {
+#                     "ParagraphIndex": i,
+#                     "Text": safe(p, "Text", "").rstrip("\r\n"),
+#                     "HasBullet": has_bullet,
+#                     "Indent": {
+#                         "Level": safe(p, "Level"),
+#                         "LeftIndent": safe(pf, "LeftIndent"),
+#                         "FirstLineIndent": safe(pf, "FirstLineIndent"),
+#                     }
+#                 }
+#                 para_info.update({
+#                     "BulletCharacter": safe(bullet, "Character"),
+#                     "BulletType": safe(bullet, "Type"),
+#                     "BulletRelativeSize": safe(bullet, "RelativeSize"),
+#                     "BulletFontName": safe(safe(bullet, "Font"), "Name"),
+#                 })
+
+#             result.append(para_info)
+
+#         except Exception:
+#             continue
+
+#     return result
+
+def build_paragraph_ir_from_textframe(runs, paragraphs):
+    """
+    find() 대신 누적 인덱스(offset)를 사용하여 
+    Run을 Paragraph에 정확하게 매핑합니다.
+    """
     paragraph_ir = []
+    current_offset = 0
 
     for p in paragraphs:
+        p_text = p.get("Text", "")
+        p_len = len(p_text)
+        
+        # 1. 단락의 절대적인 시작과 끝 인덱스 계산
+        # full_text에서 이 단락이 차지하는 실제 범위를 잡습니다.
+        start_idx = current_offset
+        end_idx = start_idx + p_len
+        
         paragraph_ir.append({
             "paragraph_index": p["ParagraphIndex"],
-            "text": p.get("Text", ""),  # strip 제거, 원문 그대로
+            "text": p_text, 
             "has_bullet": p.get("HasBullet", False),
+            "start": start_idx,
+            "end": end_idx,
             "bullet_meta": {
-                "BulletCharacter": p.get("BulletCharacter"),
                 "BulletType": p.get("BulletType"),
+                "BulletCharacter": p.get("BulletCharacter"),   # 역매핑용 명칭 (예: ArabicPeriod)
+                "ActualLabel": p.get("ActualLabel"),           # 실제 값 혹은 백업 예시 (예: 1.)
+                "BulletDescription": p.get("BulletDescription"), # 설명 (예: Numbered: ArabicPeriod (1.))
                 "BulletRelativeSize": p.get("BulletRelativeSize"),
                 "BulletFontName": p.get("BulletFontName"),
-                "Level": p.get("Level"),
-                "FirstLineIndent": p.get("FirstLineIndent"),
-                "LeftIndent": p.get("LeftIndent"),
             },
             "runs": [],
         })
+        
+        # 2. 다음 단락을 위해 오프셋 업데이트 
+        # 단락 구분자(\r) 길이만큼 +1 해줍니다. (마지막 단락 제외 로직은 생략해도 무방)
+        current_offset = end_idx + 1 
 
-    if not paragraph_ir:
-        return []
-
-    # paragraph별 text span (start / end) 계산
-    cursor = 0
-    for p in paragraph_ir:
-        text = p["text"]
-        start = full_text.find(text, cursor)
-        if start == -1:
-            raise ValueError(
-                f"Paragraph text not found in full_text. "
-                f"ParagraphIndex={p['paragraph_index']}"
-            )
-        end = start + len(text)
-        p["start"] = start
-        p["end"] = end
-        cursor = end
-
-    # Run을 paragraph에 귀속
+    # 3. Run 매핑 (각 Run의 시작점이 단락 범위 내에 있는지 확인)
     for run in runs:
         run_start = run.get("Run_Start_Index")
         if run_start is None:
             continue
+            
         for p in paragraph_ir:
-            if p["start"] <= run_start < p["end"]:
+            # Run의 시작점이 단락의 [start, end] 범위 안에 들어오면 해당 단락의 Run입니다.
+            if p["start"] <= run_start <= p["end"]:
                 p["runs"].append(run)
                 break
 
     return paragraph_ir
+# def build_paragraph_ir_from_textframe(runs, full_text, paragraphs):
+#     """
+#     Build canonical paragraph IR from a PowerPoint TextFrame JSON.
+#     Preserves minimal line-break metadata even for empty paragraphs.
+#     """
+
+#     paragraph_ir = []
+
+#     for p in paragraphs:
+#         paragraph_ir.append({
+#             "paragraph_index": p["ParagraphIndex"],
+#             "text": p.get("Text", ""), 
+#             "has_bullet": p.get("HasBullet", False),
+#             "bullet_meta": {
+#                 "BulletCharacter": p.get("BulletCharacter"),
+#                 "BulletType": p.get("BulletType"),
+#                 "BulletRelativeSize": p.get("BulletRelativeSize"),
+#                 "BulletFontName": p.get("BulletFontName"),
+#                 # "Level": p.get("Level"),
+#                 # "FirstLineIndent": p.get("FirstLineIndent"),
+#                 # "LeftIndent": p.get("LeftIndent"),
+#             },
+#             "runs": [],
+#         })
+
+#     if not paragraph_ir:
+#         return []
+
+#     # paragraph별 text span (start / end) 계산
+#     cursor = 0
+#     for p in paragraph_ir:
+#         text = p["text"]
+#         start = full_text.find(text, cursor)
+#         if start == -1:
+#             p["start"] = -1
+#             p["end"] = -1
+#             continue
+#         end = start + len(text)
+#         p["start"] = start
+#         p["end"] = end
+#         cursor = end
+
+#     # Run을 paragraph에 귀속
+#     for run in runs:
+#         run_start = run.get("Run_Start_Index")
+#         if run_start is None:
+#             continue
+#         for p in paragraph_ir:
+#             if p["start"] <= run_start < p["end"]:
+#                 p["runs"].append(run)
+#                 break
+
+#     return paragraph_ir
 
 
 def parse_text_frame_debug(text_frame):
@@ -423,7 +559,6 @@ def parse_text_frame_debug(text_frame):
     if not tr:
         return out
     full = safe(tr, "Text", "")
-    full = full.rstrip("\r")
     out.update({"Has Text": True, "Text": full, "Runs": []})
 
     if not full:
@@ -464,7 +599,42 @@ def parse_text_frame_debug(text_frame):
     out["Paragraphs"] = parse_paragraph_bullets(text_frame)
 
     return out
+    # try:
+    #     cur_idx = 1
+    #     # Font가 없으면 {}를 넘겨서 snap이 실패하지 않도록 함
+    #     cur_char = tr.Characters(cur_idx, 1)
+    #     try:
+    #         cur_snap = snap(safe(cur_char, "Font") or {})
+    #     except Exception:
+    #         cur_snap = {}
 
+    #     for i in range(2, n + 1):
+    #         nxt_char = tr.Characters(i, 1)
+    #         try:
+    #             nxt_snap = snap(safe(nxt_char, "Font") or {})
+    #         except Exception:
+    #             nxt_snap = cur_snap  # snap 비교 실패시 이전 snap 유지
+
+    #         if nxt_snap != cur_snap:
+    #             seg_len = i - cur_idx
+    #             if seg_len > 0:
+    #                 run = make_run_dict(tr.Characters(cur_idx, seg_len))
+    #                 run["Run_Start_Index"] = cur_idx - 1
+    #                 runs.append(run)
+    #             cur_idx = i
+    #             cur_snap = nxt_snap
+
+    #     last_len = n - cur_idx + 1
+    #     if last_len > 0:
+    #         run = make_run_dict(tr.Characters(cur_idx, last_len))
+    #         run["Run_Start_Index"] = cur_idx - 1
+    #         runs.append(run)
+
+    # except Exception as e:
+    #     print(f"Error parsing runs: {e}")
+    #     traceback.print_exc()
+    #     # 전체 tr가 아니라 최소 단위로 fallback 처리
+    #     runs.append(make_run_dict(tr))
 
 
 

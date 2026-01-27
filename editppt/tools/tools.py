@@ -132,8 +132,9 @@ def _get_detail_from_json(slide_json: dict, shape_id: int, keys: list):
                 if isinstance(current, dict) and key in current:
                     current = current[key]
                 else:
+                    return []
                     raise KeyError(
-                        f"Missing key path {keys} at {key}, current={type(current)}"
+                        f"Missing key path {keys} at {key}, current={type(current)}"   
                     )
             return current
 
@@ -276,6 +277,10 @@ from editppt.utils.llm_client import call_llm
 from editppt.utils.logger_manual import log_path
 from editppt.utils.utils import parse_llm_response, build_paragraph_ir_from_textframe
 from editppt.prompts import FLATTEXT_STYLE_MAPPING_PROMPT, PARAGRAPH_STYLE_MAPPING_PROMPT
+from editppt.utils.msoffice_map import BULLET_CHAR_MAP, BULLET_STYLE_MAP
+
+REVERSE_CHAR_MAP = {v[0]: k for k, v in BULLET_CHAR_MAP.items()}
+REVERSE_STYLE_MAP = {v[0]: k for k, v in BULLET_STYLE_MAP.items()}
 
 def replace_shape_text(
     prs,
@@ -294,33 +299,52 @@ def replace_shape_text(
     Supports paragraph-aware bullet preservation.
     If text overflows after replacement, shrink font sizes proportionally.
     """
-
+    if new_text and isinstance(new_text, str):
+            new_text = new_text.replace('\n', '\r')
     # ------------------------------------------------------------------
     # 1. Load old info from JSON
     # ------------------------------------------------------------------
     old_runs = _get_detail_from_json(
         slide_json, shape_id, ["More_detail", "Text", "TextFrame", "Runs"]
     )
-    full_text = _get_detail_from_json(
-        slide_json, shape_id, ["More_detail", "Text", "TextFrame", "Text"]
-    )
+    # full_text = _get_detail_from_json(
+    #     slide_json, shape_id, ["More_detail", "Text", "TextFrame", "Text"]
+    # )
     
     old_paragraphs = _get_detail_from_json(
         slide_json, shape_id, ["More_detail", "Text", "TextFrame", "Paragraphs"]
     )
 
-    paragraph_ir = build_paragraph_ir_from_textframe(
-        old_runs, full_text, old_paragraphs
-    )
+    # paragraph_ir = build_paragraph_ir_from_textframe(
+    #     old_runs, full_text, old_paragraphs
+    # )
+    
+    paragraph_ir = build_paragraph_ir_from_textframe(old_runs, old_paragraphs)
 
-    payload = [
-        {
-            "id": p["paragraph_index"],
-            "text": p["text"],
-            "runs": p["runs"],
-        }
-        for p in paragraph_ir
-    ]
+    if paragraph_ir:
+        payload = []
+        for p in paragraph_ir:
+            if p["has_bullet"]:
+                payload.append(
+                    {
+                        "para_id": p["paragraph_index"],
+                        "text": p["text"],
+                        "has_bullet": p["has_bullet"],
+                        "bullet_meta": p.get("bullet_meta", {}),
+                        "runs": p["runs"],
+                    }
+                )
+            else:
+                payload.append(
+                    {
+                        "para_id": p["paragraph_index"],
+                        "text": p["text"],
+                        "has_bullet": p["has_bullet"],
+                        "runs": p["runs"],
+                    }
+                )
+            
+        
 
     # ------------------------------------------------------------------
     # 2. Extract base font size (upper bound for shrink)
@@ -331,6 +355,7 @@ def replace_shape_text(
         if run.get("Font", {}).get("Size")
     ]
     old_base_font_size = max(sizes) if sizes else None
+    
 
     # ------------------------------------------------------------------
     # 3. Resolve slide / shape / TextRange
@@ -345,6 +370,10 @@ def replace_shape_text(
         if container == "shape"
         else shape.Table.Cell(row_index, col_index).Shape.TextFrame.TextRange
     )
+    # ------------------------------------------------------------------
+    # +Extract shape height (upper bound for shrink)
+    # ------------------------------------------------------------------
+    original_height = shape.Height
 
     # ------------------------------------------------------------------
     # 4. LLM call (mode split)
@@ -397,21 +426,33 @@ def replace_shape_text(
     if isinstance(parsed, tuple):
         parsed = parsed[0]
     
-    with open(
-    log_path("style_mapping_llm_prompt.json"), "w", encoding="utf-8") as f:
-        json.dump(
-            {
-                "llm_prompt": llm_prompt,
-                "is_paragraph_mode": is_paragraph_mode,
-                "paragraph_ir_len": len(paragraph_ir),
-                "response_text": response_text,
-                "parsed": parsed
-            },
-            f,
-            ensure_ascii=False,
-            indent=2,
-        )
+    # 로그 누적
+    log_file = log_path("style_mapping_llm_prompt.json")
 
+    if os.path.exists(log_file):
+        with open(log_file, "r", encoding="utf-8") as f:
+            try:
+                logs = json.load(f)
+            except json.JSONDecodeError:
+                logs = []
+    else:
+        logs = []
+
+    # 새 로그 항목
+    new_log = {
+        "llm_prompt": llm_prompt,
+        "is_paragraph_mode": is_paragraph_mode,
+        "paragraph_ir_len": len(paragraph_ir),
+        "response_text": response_text,
+        "parsed": parsed
+    }
+
+    logs.append(new_log)
+
+    with open(log_file, "w", encoding="utf-8") as f:
+        json.dump(logs, f, ensure_ascii=False, indent=2)
+
+    new_runs = parsed        
     if is_paragraph_mode:
         if isinstance(parsed, list) and all(isinstance(p, dict) for p in parsed):
             parsed_paragraphs = parsed
@@ -464,93 +505,142 @@ def replace_shape_text(
 
             current_range = new_range
 
-# ------------------------------------------------------------------
+    #-------------------------------------------------------------------
     # 7. Apply text (PARAGRAPH MODE)
     # ------------------------------------------------------------------
     else:
-        para_map = {p["id"]: p for p in parsed}
+        # 1. LLM 응답을 ID 기반 딕셔너리로 변환 (정렬 보장)
+        para_map = {p["para_id"]: p for p in parsed_paragraphs}
+        sorted_pids = sorted(para_map.keys())
         
-        # 1. 초기화: 모든 텍스트를 지워도 최소 1개의 Paragraph는 존재함
         tr.Text = ""
+        full_range = tr 
 
-        for i, para_ir in enumerate(paragraph_ir):
-            # 현재 작업할 문단 객체 가져오기 (항상 마지막 문단)
+        for i, pid in enumerate(sorted_pids):
+            para_data = para_map[pid]
+            
+            # A. Runs 삽입 및 폰트 스타일 적용
+            for run in para_data.get("runs", []):
+                text_seg = run.get("Text", "")
+                if not text_seg and len(para_data.get("runs", [])) > 1:
+                    continue 
+
+                inserted_run = full_range.InsertAfter(text_seg)
+                
+                f = inserted_run.Font
+                font_info = run.get("Font", {})
+                
+                # Font 기본 속성
+                if font_info.get("Name"): f.Name = font_info["Name"]
+                if font_info.get("Size"): f.Size = font_info["Size"]
+                
+                # MsoTriState 속성 (-1: True, 0: False)
+                f.Bold = -1 if font_info.get("Bold") else 0
+                f.Italic = -1 if font_info.get("Italic") else 0
+                f.Underline = -1 if font_info.get("Underline") else 0
+                f.Shadow = -1 if font_info.get("Shadow") else 0
+                
+                if "Strikethrough" in font_info:
+                    f.Strikethrough = -1 if font_info["Strikethrough"] else 0
+                
+                # 첨자 설정
+                if font_info.get("Subscript"):
+                    f.Subscript = -1
+                elif font_info.get("Superscript"):
+                    f.Superscript = -1
+                else:
+                    f.Subscript = 0
+                    f.Superscript = 0
+
+                # RGB 색상 적용
+                color_info = font_info.get("Color")
+                if isinstance(color_info, dict):
+                    r, g, b = color_info.get("R", 0), color_info.get("G", 0), color_info.get("B", 0)
+                    f.Color.RGB = r + (g << 8) + (b << 16)
+
+            # B. Paragraph 서식 (Bullet & Indent) 적용
             curr_para_idx = tr.Paragraphs().Count
             this_para = tr.Paragraphs(curr_para_idx)
-
-            pid = para_ir["paragraph_index"]
-            para_data = para_map.get(pid)
-
-            # --- A. 내용 삽입 (runs가 없어도 문단 서식은 적용해야 함) ---
-            if para_data and para_data.get("runs"):
-                # 해당 문단에 텍스트가 있는 경우
-                for run in para_data["runs"]:
-                    text_seg = run.get("Text", "").replace("\r", "")
-                    if not text_seg:
-                        continue
-                    
-                    # 현재 문단의 끝에 텍스트 추가
-                    inserted_run = this_para.InsertAfter(text_seg)
-                    
-                    # 폰트 스타일 적용
-                    f = inserted_run.Font
-                    font_info = run.get("Font", {})
-                    if font_info.get("Name"): f.Name = font_info["Name"]
-                    if font_info.get("Size"): f.Size = font_info["Size"]
-                    f.Bold = -1 if font_info.get("Bold") else 0
-                    
-                    color = font_info.get("Color")
-                    if color and all(k in color for k in ("R", "G", "B")):
-                        f.Color.RGB = color["R"] + (color["G"] << 8) + (color["B"] << 16)
-            
-            # --- B. 문단 서식 복원 (내용 유무와 상관없이 원본 구조 복제) ---
-            # Alignment: 1=Left, 2=Center, 3=Right
-            this_para.ParagraphFormat.Alignment = para_ir.get("Alignment", 1)
-            
             pf = this_para.ParagraphFormat
-            bullet_meta = para_ir.get("bullet_meta", {})
-            if para_ir.get("has_bullet"):
-                pf.Bullet.Visible = True
-                pf.Bullet.Type = bullet_meta.get("BulletType", 1)
-                # 인덴트 레벨 적용 (Level이 0부터 시작하는지 확인 필요)
-                if para_ir.get("Level") is not None:
-                    this_para.IndentLevel = para_ir["Level"]
+            
+            # Indent Level 복구 (original_meta 참조)
+            original_meta = next((p for p in paragraph_ir if p["paragraph_index"] == pid), None)
+            if original_meta:
+                # JSON 구조에 따라 Indent 내의 Level 확인
+                indent_info = original_meta.get("Indent")
+                level = indent_info.get("Level", 1) if isinstance(indent_info, dict) else 1
+                this_para.IndentLevel = max(1, min(level, 5))
+                
+                
+            # 상세 불렛 메타데이터 복원
+            is_bullet_active = para_data.get("has_bullet")
+            
+            if is_bullet_active:
+                pf.Bullet.Visible = -1  # MsoTrue
+                
+                b_meta = para_data.get("bullet_meta", {})
+                try:
+                    b_type = int(b_meta.get("BulletType", 1))
+                except (ValueError, TypeError):
+                    b_type = 1
+                pf.Bullet.Type = b_type
+                
+                if b_meta.get("BulletFontName"):
+                    pf.Bullet.Font.Name = b_meta["BulletFontName"]
+                
+                # --- [수정된 역매핑 구간] ---
+                b_char_val = b_meta.get("BulletCharacter") # 예: "ArabicPeriod" 또는 "Check Mark"
+                
+                if b_char_val:
+                    if b_type == 1:  # Symbol (기호)
+                        # 명칭으로 코드(ID) 검색
+                        actual_char_code = REVERSE_CHAR_MAP.get(b_char_val)
+                        if actual_char_code:
+                            pf.Bullet.Character = actual_char_code
+                        elif isinstance(b_char_val, int): # 만약 숫자가 직접 들어왔을 경우 대비
+                            pf.Bullet.Character = b_char_val
+
+                    elif b_type == 2:  # Numbered (숫자)
+                        # 명칭으로 스타일(ID) 검색
+                        actual_style_code = REVERSE_STYLE_MAP.get(b_char_val)
+                        if actual_style_code is not None:
+                            pf.Bullet.Style = actual_style_code
+                # -------------------------
+
+                # RelativeSize 적용
+                if b_meta.get("BulletRelativeSize"):
+                    try:
+                        size_val = int(float(b_meta["BulletRelativeSize"]))
+                        # PPT 범위 제한 (25% ~ 400%)
+                        pf.Bullet.RelativeSize = max(25, min(size_val, 400))
+                    except: pass
             else:
-                pf.Bullet.Visible = False
+                pf.Bullet.Visible = 0  # MsoFalse
+                pf.Bullet.Type = 0     # msoBulletNone
 
-            # --- C. 다음 문단을 위한 줄바꿈 삽입 ---
-            # 원본 paragraph_ir의 개수만큼 문단을 만들어야 하므로 i를 기준으로 \r 삽입
-            if i < len(paragraph_ir) - 1:
-                # 현재 문단의 바로 뒤에 \r을 넣어 다음 문단(Paragraphs.Count + 1)을 생성
-                this_para.InsertAfter("\r")
-
-    # ------------------------------------------------------------------
-    # 8. Overflow handling (existing logic, unchanged)
-    # ------------------------------------------------------------------
     new_tr = tf.TextRange
+    current_size = new_tr.Font.Size
 
-    if old_base_font_size and new_tr.Length > 0:
-        current_max_size = new_tr.Font.Size
-
-        if new_tr.BoundHeight > shape.Height:
-            target_size = min(current_max_size, old_base_font_size)
-            new_tr.Font.Size = target_size
-
-            while new_tr.BoundHeight > shape.Height and new_tr.Font.Size > 6:
-                new_tr.Font.Size -= 0.5
-
-            scale = new_tr.Font.Size / target_size if target_size else 1.0
-            for i in range(1, new_tr.Length + 1):
-                ch = new_tr.Characters(i, 1)
-                if ch.Font.Size:
-                    ch.Font.Size *= scale
-
-    return {
-        "operation": "replace_shape_text",
-        "slide": slide_number,
-        "shape_id": shape_id,
-        "paragraph_mode": is_paragraph_mode,
-    }
+    if old_base_font_size:
+        current_size = min(current_size, old_base_font_size)
+                
+    while new_tr.BoundHeight > original_height and current_size > 9.0:
+        current_size -= 0.5
+        new_tr.Font.Size = current_size
+    
+    scale = current_size / new_tr.Font.Size if new_tr.Font.Size else 1.0
+    if new_tr.Length > 0:
+        for i in range(1, new_tr.Length + 1):
+            ch = new_tr.Characters(i, 1)
+            if ch.Font.Size:
+                ch.Font.Size *= scale
+            
+        return {
+            "operation": "replace_shape_text",
+            "slide": slide_number,
+            "shape_id": shape_id,
+            "paragraph_mode": is_paragraph_mode,
+        }
 
     
     # ###13241341243

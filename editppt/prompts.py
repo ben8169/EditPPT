@@ -229,23 +229,22 @@ Response ONLY JSON.
 
 
 def create_edit_agent_system_prompt(current_ppt_json:str) -> str:
-    prompt= f"""You are a Presentation Editing Agent. 
-Use the current state of the slide shown below and orchestrate one or multiple tools, calling them repeatedly as appropriate, to carry out and complete the user's editing request.
+    prompt= f"""## Role
+You are a 'Presentation Editing Agent'. Your goal is to fulfill the user's editing requests by orchestrating the available tools based on the current slide state.
 
-Notes: 
-When the user's request is vague, use the following guidelines:
-- A typical [SHAPE] has its position coordinates at (x, y).
-- If the user does not specify coordinates, infer a reasonable (x, y) based on given layout patterns information.
-
-When inferring positions, follow these priorities in order:
-1) Preserve overall layout balance and symmetry.
-2) Align with related or referenced elements (e.g., images, subtitles).
-
-If the request has already been fulfilled or no changes are required, do not call any tools.
-
+## Current Slide State (JSON)
 {current_ppt_json}
+
+## Guidelines for Vague Requests
+If the user's request is ambiguous, apply the following logic to infer coordinates (x, y):
+1. **Layout Priority**: 
+   - 1st: Maintain overall balance and symmetry.
+   - 2nd: Align with existing related elements (e.g., images, titles, subtitles).
+2. **Standard Positioning**: Use a reasonable (x, y) coordinate that follows common presentation design patterns.
+
+## Critical Rules & Constraints
+1. **Tool Usage**: Call tools repeatedly as needed. However, if the request is already fulfilled or no changes are necessary, **DO NOT call any tool.**
 """
-    
     return prompt
 
 
@@ -356,6 +355,7 @@ Directions are executable tool instructions, NOT advice.
     return prompt
 
 def create_text_validator_agent_user_prompt(old_parse, new_parse, used_tools):
+    
     prompt = f"""
 Please compare the following two states:
 
@@ -669,37 +669,71 @@ You are a PowerPoint paragraph style preservation assistant.
 
 Input consists of multiple paragraphs.
 Each paragraph has:
-- id
-- text
-- runs (styled segments)
+- id: unique identifier
+- text: original text
+- has_bullet: boolean (true if the paragraph has a bullet point)
+- runs: styled segments
 
 Rules:
-1. Preserve paragraph boundaries. Do NOT merge or split paragraphs.
-2. Do NOT invent or remove paragraphs.
-3. Do NOT simulate bullets or indentation using characters
-   (e.g., "-", "•", "*", numbering).
-4. Apply styles semantically based on original runs.
-5. When text is shortened, keep styles of key terms.
+1. Preserve paragraph boundaries. Each paragraph in the output must correspond to an ID from the input.
+2. If 'has_bullet' is true, you must also preserve the 'bullet_meta' object for that paragraph ID.
+3. Preserve '\t' carefully. If '\r\t' comes, '\t' should be applied in next line.
+4. If the input contains many empty trailing paragraphs (empty text), you may omit them in the output if they are not necessary for the new content.
+5. Do NOT simulate bullets using characters like "-", "•", or numbers in the "Text" field. Use the "has_bullet" property instead.
+6. Apply styles (runs) semantically to the 'new_text' so that the original design can be preserved as much as possible.
+
 
 Output Rules:
 - Return ONLY raw JSON.
-- Output MUST be a list of paragraphs with the SAME ids.
-- Each paragraph contains only styled runs.
-
 Output format:
 [
   {
-    "id": 1,
+    "para_id": 0,
+    "has_bullet": true,
+    "bullet_meta": {"BulletCharacter": ...},
     "runs": [
-      {"Text": "...", "Font": {...}}
+      {"Text": "...", "Font": {...}, {"Text": "...", "Font": {...}, ...}
     ]
   }
 ]
-
-Allowed Font Properties:
-Name, Size, Bold, Italic, Underline, Strikethrough,
-Subscript, Superscript, Color.
 """
+
+# PARAGRAPH_STYLE_MAPPING_PROMPT = """
+# You are a PowerPoint paragraph style preservation assistant.
+
+# Input consists of multiple paragraphs.
+# Each paragraph has:
+# - id
+# - text
+# - runs (styled segments)
+
+# Rules:
+# 1. Preserve paragraph boundaries. Do NOT merge or split paragraphs.
+# 2. Do NOT invent or remove paragraphs.
+# 3. Do NOT simulate bullets or indentation using characters
+#    (e.g., "-", "•", "*", numbering).
+# 4. Apply styles semantically based on original runs.
+# 5. When text is shortened, keep styles of key terms.
+
+# Output Rules:
+# - Return ONLY raw JSON.
+# - Output MUST be a list of paragraphs with the SAME ids.
+# - Each paragraph contains only styled runs.
+
+# Output format:
+# [
+#   {
+#     "id": 1,
+#     "runs": [
+#       {"Text": "...", "Font": {...}}
+#     ]
+#   }
+# ]
+
+# Allowed Font Properties:
+# Name, Size, Bold, Italic, Underline, Strikethrough,
+# Subscript, Superscript, Color.
+# """
 
 
 
